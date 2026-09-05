@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Stylized Modern Cyber Green 'V' Logo -->
+    <!-- Left Wing of V -->
+    <path
+        android:pathData="M30,36 L44,36 L54,62 L40,62 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="30"
+                android:startY="36"
+                android:endX="54"
+                android:endY="62"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#00E676"/>
+                <item android:offset="1.0" android:color="#00B0FF"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Right Wing of V -->
+    <path
+        android:pathData="M64,36 L78,36 L54,74 L40,74 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="40"
+                android:startY="74"
+                android:endX="78"
+                android:endY="36"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#00E676"/>
+                <item android:offset="1.0" android:color="#00897B"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Glowing Top Accent Node -->
+    <path
+        android:pathData="M54,28 m-3.5,0 a3.5,3.5 0 1,1 7,0 a3.5,3.5 0 1,1 -7,0"
+        android:fillColor="#E8FCE8"/>
+</vector>
