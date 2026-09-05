@@ -52,7 +52,7 @@ Unlike traditional remote mouse apps that require heavy server software, VectraT
 
 <div align="center">
 
-[![Download APK](https://img.shields.io/badge/⬇_Download_VectraTouch-v1.0.0-00E676?style=for-the-badge&labelColor=0A0D0B)](https://github.com/subhranilBCG/VectraTrackPad/releases/latest/download/VectraTrackPad-v1.0.0.apk)
+[![Download APK](https://img.shields.io/badge/⬇_Download_VectraTouch-v1.0.0-00E676?style=for-the-badge&labelColor=0A0D0B)](https://github.com/subhranilBCG/VectraTrackPad/releases/latest/download/VectraTouch-v1.0.0.apk)
 
 </div>
 
@@ -60,7 +60,7 @@ Unlike traditional remote mouse apps that require heavy server software, VectraT
 
 ### Installation Steps
 
-1. Download `VectraTrackPad-v1.0.0.apk` from the button above (or [GitHub Releases](https://github.com/subhranilBCG/VectraTrackPad/releases/latest)).
+1. Download `VectraTouch-v1.0.0.apk` from the button above (or [GitHub Releases](https://github.com/subhranilBCG/VectraTrackPad/releases/latest)).
 2. On your Android phone, enable **Install Unknown Apps** for your browser if prompted.
 3. Tap **Install**.
 4. Open **VectraTouch** and grant Bluetooth / Local Network permissions.
