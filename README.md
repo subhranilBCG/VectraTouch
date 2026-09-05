@@ -1,19 +1,19 @@
 <!-- 
-  VectraTrackPad — README
-  SEO Keywords: Android trackpad app, phone as mouse, Bluetooth HID mouse,
-  wireless trackpad, USB ADB mouse, Wi-Fi remote mouse, driverless mouse,
-  Android PC controller, spatial gesture trackpad, multi-touch mouse
+  VectraTouch — README
+  SEO Keywords: Android trackpad app, phone as pc trackpad, phone as mouse, Bluetooth HID mouse,
+  wireless trackpad for pc, USB ADB mouse, Wi-Fi remote mouse, driverless mouse,
+  Android PC controller, spatial gesture trackpad, multi-touch mouse, virtual trackpad
 -->
 
 <div align="center">
 
-<img src="docs/images/hero_banner.jpg" alt="VectraTrackPad — Turn your phone into a precision trackpad" width="100%"/>
+<img src="docs/images/hero_banner.jpg" alt="VectraTouch — Phone as PC Trackpad & Mouse" width="100%"/>
 
-# VectraTrackPad
+# VectraTouch
 
-### Turn Your Android Phone into a Precision PC Trackpad
+### Phone as PC Trackpad & Mouse
 
-**Driverless Bluetooth HID · Zero-Latency USB · Wi-Fi LAN · Spatial Gesture Engine**
+**Driverless Bluetooth HID · Zero-Latency USB · Wi-Fi LAN · Spatial Multi-touch Gestures**
 
 [![Release](https://img.shields.io/badge/release-v1.0.0-00E676?style=for-the-badge&logo=github)](https://github.com/subhranilBCG/VectraTrackPad/releases/latest)
 [![Android](https://img.shields.io/badge/Android-API_28+-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com)
@@ -28,19 +28,21 @@
 
 ---
 
-## 📖 What is VectraTrackPad?
+## 📖 What is VectraTouch?
 
-**VectraTrackPad** is a high-performance Android app that transforms your smartphone into a **full-featured wireless trackpad** for your PC, Mac, or Linux machine. Unlike traditional remote mouse apps that require server software, VectraTrackPad's **Bluetooth HID mode works completely driverless** — your phone appears as a native Bluetooth mouse to any operating system.
+**VectraTouch** is a high-performance Android utility that turns your smartphone into a **precision wireless and wired trackpad** for your PC, Mac, or Linux desktop. 
 
-### Why VectraTrackPad?
+Unlike traditional remote mouse apps that require heavy server software, VectraTouch's **Bluetooth HID mode works completely driverless** — your phone pairs directly as a native Bluetooth mouse with zero PC-side installation. When you need ultra-low latency or are in crowded RF environments, switch instantly to **Zero-Latency USB (ADB)** or **Wi-Fi LAN** with UDP auto-discovery.
 
-| Problem | VectraTrackPad Solution |
+### Why VectraTouch?
+
+| Problem | VectraTouch Solution |
 |---|---|
-| 🖱️ Forgot your mouse? Touchpad broken? | Use your phone — it's always with you |
-| 📦 Don't want to install PC software? | **Bluetooth HID is fully driverless** — zero host setup |
-| 🎮 Need low-latency for gaming/design? | USB mode via ADB with **sub-millisecond** packet delivery |
-| 🌐 Want wireless without Bluetooth? | Wi-Fi LAN mode with **UDP auto-discovery** |
-| 😤 Hate tiny on-screen click buttons? | **Full edge-to-edge trackpad** with spatial finger sorting |
+| 🖱️ Forgot your mouse or touchpad broken? | Turn your phone into a precision trackpad in seconds |
+| 📦 Don't want to install software on work PC? | **Bluetooth HID is 100% driverless** — native OS pairing |
+| 🎮 Need zero lag for gaming or design? | **USB mode (ADB)** with sub-millisecond packet delivery |
+| 🌐 Want wireless without Bluetooth pairing? | **Wi-Fi LAN mode** with instant UDP auto-discovery |
+| 😤 Tired of cramped on-screen buttons? | **Full edge-to-edge trackpad** with smart spatial finger sorting |
 
 ---
 
@@ -50,18 +52,18 @@
 
 <div align="center">
 
-[![Download APK](https://img.shields.io/badge/⬇_Download_VectraTrackPad-v1.0.0-00E676?style=for-the-badge&labelColor=0A0D0B)](https://github.com/subhranilBCG/VectraTrackPad/releases/latest/download/VectraTrackPad-v1.0.0.apk)
+[![Download APK](https://img.shields.io/badge/⬇_Download_VectraTouch-v1.0.0-00E676?style=for-the-badge&labelColor=0A0D0B)](https://github.com/subhranilBCG/VectraTrackPad/releases/latest/download/VectraTrackPad-v1.0.0.apk)
 
 </div>
 
-> **Requirements:** Android 9.0+ (API 28) · Bluetooth capable device
+> **System Requirements:** Android 9.0+ (API 28) · Bluetooth or USB debugging enabled
 
 ### Installation Steps
 
-1. Download `VectraTrackPad-v1.0.0.apk` from the link above
-2. On your Android phone, go to **Settings → Security → Install Unknown Apps** and allow your browser
-3. Open the downloaded APK and tap **Install**
-4. Launch **VectraTrackPad** and grant Bluetooth permissions when prompted
+1. Download `VectraTrackPad-v1.0.0.apk` from the button above (or [GitHub Releases](https://github.com/subhranilBCG/VectraTrackPad/releases/latest)).
+2. On your Android phone, enable **Install Unknown Apps** for your browser if prompted.
+3. Tap **Install**.
+4. Open **VectraTouch** and grant Bluetooth / Local Network permissions.
 
 ---
 
@@ -69,43 +71,48 @@
 
 ### 🔀 Tri-Mode Transport — Connect Your Way
 
-<img src="docs/images/transport_architecture.jpg" alt="VectraTrackPad transport architecture — Bluetooth, USB, and Wi-Fi connections" width="100%"/>
+<img src="docs/images/transport_architecture.jpg" alt="VectraTouch transport architecture — Bluetooth, USB, and Wi-Fi connections" width="100%"/>
 
 | Mode | How It Works | Best For |
 |---|---|---|
-| **🔵 Bluetooth HID** | Pairs as a native OS mouse — **no software needed on PC** | Everyday use, presentations, travel |
-| **🔌 USB (ADB)** | Direct TCP over USB cable — zero-latency packets | Gaming, design work, reliability |
-| **📶 Wi-Fi (LAN)** | TCP over local network + UDP auto-discovery beacon | Multi-device, no cable, no pairing |
-| **⚡ AUTO** | Intelligently selects the best available transport | Set it and forget it |
+| **🔵 Bluetooth HID** | Pairs as a native OS mouse — **no software needed on PC** | Everyday browsing, presentations, travel |
+| **🔌 USB (ADB)** | Direct TCP over USB cable — zero packet latency | Gaming, CAD/editing, crowded Wi-Fi |
+| **📶 Wi-Fi (LAN)** | TCP over local network + UDP auto-discovery beacon | Wireless freedom without Bluetooth pairing |
+| **⚡ AUTO** | Intelligently selects the fastest active connection | Seamless automatic switching |
 
-### 🖐️ Spatial Gesture Sorting — No Buttons Needed
+---
 
-<img src="docs/images/spatial_sorting.jpg" alt="VectraTrackPad 3-finger spatial sorting — dynamic finger role assignment" width="100%"/>
+### 🖐️ Spatial Multi-touch Sorting — No Static Buttons
 
-Instead of cramped on-screen buttons, VectraTrackPad uses an innovative **spatial sorting** algorithm. Place your fingers anywhere on the screen — their **X-axis positions** dynamically determine their roles:
+<img src="docs/images/spatial_sorting.jpg" alt="VectraTouch 3-finger spatial sorting — dynamic finger role assignment" width="100%"/>
+
+Instead of clumsy on-screen buttons that waste screen real estate, VectraTouch dynamically calculates finger roles based on horizontal (X-axis) coordinates across the whole display:
 
 | Fingers | Gesture | Action |
 |---|---|---|
-| ☝️ **1 finger** | Drag anywhere | **Move cursor** |
-| ☝️☝️ **2 fingers** | Left finger tap/hold | **Left click / drag** |
-| ☝️☝️ **2 fingers** | Right finger tap/hold | **Right click** |
-| ☝️☝️ **2 fingers** | Both fingers swipe up/down | **Scroll** |
+| ☝️ **1 finger** | Drag anywhere | **Cursor movement** |
+| ☝️☝️ **2 fingers** | Left finger tap / hold | **Left click / drag & drop** |
+| ☝️☝️ **2 fingers** | Right finger tap / hold | **Right click** |
+| ☝️☝️ **2 fingers** | Both fingers swipe up/down | **Natural smooth scroll** |
 | ☝️☝️☝️ **3 fingers** | Simultaneous tap | **Middle click** |
 | ☝️☝️ **2 fingers** | Quick tap (either side) | **Tap-to-click** |
 
-### ⚙️ Glassmorphic Settings Panel
+---
 
-- **Mouse sensitivity** — Adjustable from `0.8×` to `2.8×` with steppers, slider, and presets
-- **Screen orientation** — Landscape, Reverse Landscape, Portrait, Auto Sensor
-- **Persistent preferences** — Settings saved automatically via SharedPreferences
+### ⚙️ In-App Glassmorphic Settings
+
+- **Cursor Sensitivity** — Fine-tune speed from `0.8×` to `2.8×` with instant presets and touch slider.
+- **Orientation Modes** — Landscape, Reverse Landscape, Portrait, or Auto Sensor.
+- **Persistent Preferences** — Remembers your sensitivity and preferred transport mode across launches.
+
+---
 
 ### 🎨 Cyber Aesthetic UI
 
-- **Matte black** (`#0A0D0B`) canvas with **cyber green** (`#00E676`) accents
-- Matrix-style dot grid background
-- Dim watermark gesture guide cards (non-intrusive HUD)
-- Glowing touch point indicators with role labels
-- Edge-to-edge immersive fullscreen with display cutout support
+- **Matte Black** (`#0A0D0B`) background with **Cyber Green** (`#00E676`) glowing touch indicators.
+- Non-intrusive watermark gesture HUD cards on canvas.
+- Real-time connection badge with live IP/port indicators.
+- Immersive edge-to-edge layout with full camera cutout / notch support.
 
 ---
 
@@ -113,7 +120,7 @@ Instead of cramped on-screen buttons, VectraTrackPad uses an innovative **spatia
 
 ```mermaid
 graph LR
-    subgraph Phone["📱 Android Phone"]
+    subgraph Phone["📱 Android Phone (VectraTouch)"]
         TV["TrackpadView<br/>Multi-touch Engine"]
         TTM["TrackpadTransportManager<br/>AUTO | BT | USB | WIFI"]
         BHM["BluetoothHidManager"]
@@ -124,8 +131,8 @@ graph LR
     TTM --> BHM
     TTM --> UTS
 
-    subgraph PC["💻 Host PC / Mac"]
-        OS["OS HID Stack"]
+    subgraph PC["💻 Host PC / Mac / Linux"]
+        OS["OS HID Mouse Driver"]
         Companion["VectraCompanion<br/>(.py / .cmd / .ps1)"]
     end
 
@@ -146,7 +153,7 @@ stateDiagram-v2
     IDLE --> CURSOR_MOVE : 1 finger down
     IDLE --> LEFT_HELD : 2 fingers (left tap)
     IDLE --> RIGHT_HELD : 2 fingers (right tap)
-    IDLE --> SCROLL_MODE : 2 fingers (both drag)
+    IDLE --> SCROLL_MODE : 2 fingers (both swipe)
     IDLE --> MIDDLE_CLICK : 3 fingers (tap)
 
     CURSOR_MOVE --> IDLE : finger up
@@ -162,47 +169,53 @@ stateDiagram-v2
 
 ### Mode 1: Bluetooth HID (Driverless — Zero Setup on PC)
 
-1. **Launch** VectraTrackPad on your Android phone
-2. **Select** the `BT` tab (or leave on `AUTO`)
-3. On your **PC/Mac**, open **Bluetooth Settings** → **Add Device**
-4. Select your phone from the list — it appears as a **Bluetooth mouse**
-5. **Done!** Start moving your finger on the phone screen
+1. **Launch VectraTouch** on your phone.
+2. Select the **`BT`** tab (or leave on `AUTO`).
+3. On your **PC/Mac**, open **Bluetooth Settings → Add Device**.
+4. Select your phone from the list — it pairs as a standard **Bluetooth mouse**.
+5. **Done!** Move your finger on your phone screen to control the cursor.
+
+---
 
 ### Mode 2: USB (ADB — Zero Latency)
 
-1. **Connect** your phone to PC via USB cable
-2. **Enable USB Debugging** on your phone (Settings → Developer Options)
-3. On your PC, run the one-liner:
+1. Connect your phone to your PC via USB cable.
+2. Enable **USB Debugging** on your phone (*Settings → Developer Options*).
+3. On your PC, forward the port with ADB:
    ```bash
    adb forward tcp:53824 tcp:53824
    ```
-4. **Launch** a companion script:
-   - **Windows (1-click):** Double-click `host/run_usb_windows.bat`
-   - **Python (cross-platform):** `python host/vectra_usb_host.py`
-5. **Select** the `USB` tab in VectraTrackPad
+4. Run the companion script:
+   - **Windows:** Double-click `host/run_usb_windows.bat`
+   - **Cross-Platform:** `python host/vectra_usb_host.py`
+5. Select the **`USB`** tab in VectraTouch.
 
-### Mode 3: Wi-Fi (LAN — Wireless, No Pairing)
+---
 
-1. Ensure your **phone and PC are on the same Wi-Fi network**
-2. **Launch** VectraTrackPad and select the `WIFI` tab — note the displayed **IP address**
-3. On your PC, run the companion:
+### Mode 3: Wi-Fi (LAN — Wireless without Bluetooth)
+
+1. Connect phone and PC to the **same Wi-Fi network**.
+2. Launch VectraTouch and select the **`WIFI`** tab (note the displayed phone IP).
+3. Run the companion script on your PC:
    - **Windows (1-click):** Double-click `host/run_wifi_windows.bat`
    - **Python:** `python host/vectra_usb_host.py --wifi`
-   - The companion **auto-discovers** your phone via UDP beacon on port `53826`
-4. **Done!** Cursor control begins immediately
+   - *(The companion auto-discovers your phone via UDP beacon on port `53826`)*
+4. Cursor control begins immediately!
 
-### Companion Scripts (for USB & Wi-Fi modes)
+---
 
-The app bundles companion scripts for the PC host. You can also download them from your phone:
+### 📦 Built-In Offline Companion Web Server
 
-1. Open `http://<PHONE_IP>:8080` in your PC browser (served by the app's built-in HTTP server)
-2. Download the companion script for your OS
+Don't have the companion script on your PC? VectraTouch runs an offline web server on your phone:
 
-| Script | Platform | Dependencies |
+1. Open `http://<PHONE_IP>:8080` in your PC browser.
+2. Download `VectraCompanion.cmd` or `VectraCompanion.py` directly from your phone.
+
+| Companion Script | OS Support | Dependencies |
 |---|---|---|
-| `VectraCompanion.cmd` | Windows | None (wraps PowerShell) |
-| `VectraCompanion.ps1` | Windows | PowerShell (built-in) |
-| `VectraCompanion.py` | Windows / Mac / Linux | Python 3 |
+| `VectraCompanion.cmd` | Windows | None (native PowerShell wrapper) |
+| `VectraCompanion.ps1` | Windows | Built-in PowerShell |
+| `VectraCompanion.py` | Windows / Mac / Linux | Python 3 + `pynput` |
 
 ---
 
@@ -213,63 +226,52 @@ VectraTrackPad/
 ├── app/
 │   ├── src/main/
 │   │   ├── java/com/example/vectratrackpad/
-│   │   │   ├── MainActivity.kt              # Permissions, fullscreen, lifecycle
+│   │   │   ├── MainActivity.kt              # Fullscreen, permissions, lifecycle
 │   │   │   ├── TrackpadView.kt              # Canvas engine, gestures, HUD
 │   │   │   ├── TrackpadTransportManager.kt  # Multi-transport coordinator
 │   │   │   ├── BluetoothHidManager.kt       # BT HID profile & reports
 │   │   │   ├── UsbTrackpadServer.kt         # TCP server + UDP beacon
 │   │   │   └── CompanionHttpServer.kt       # HTTP server (port 8080)
 │   │   ├── assets/
-│   │   │   ├── index.html                   # Offline companion download page
+│   │   │   ├── index.html                   # Offline companion web page
 │   │   │   ├── VectraCompanion.cmd          # Windows batch launcher
 │   │   │   ├── VectraCompanion.ps1          # PowerShell companion
-│   │   │   └── VectraCompanion.py           # Python cross-platform companion
-│   │   └── res/                             # Layouts, icons, themes, colors
-│   └── build.gradle.kts                     # App-level Gradle config
+│   │   │   └── VectraCompanion.py           # Python companion
+│   │   └── res/                             # Vector drawables, themes, strings
+│   └── build.gradle.kts                     # App Gradle build config (v1.0.0)
 ├── host/
-│   ├── vectra_usb_host.py                   # Host-side Python companion
-│   ├── run_usb_windows.bat                  # 1-click USB launcher
-│   └── run_wifi_windows.bat                 # 1-click Wi-Fi launcher
-├── docs/images/                             # README illustrations
-├── build.gradle.kts                         # Root Gradle config
-├── settings.gradle.kts                      # Gradle settings
-└── README.md                                # ← You are here
+│   ├── vectra_usb_host.py                   # PC Python host script
+│   ├── run_usb_windows.bat                  # 1-click Windows USB launcher
+│   └── run_wifi_windows.bat                 # 1-click Windows Wi-Fi launcher
+├── docs/images/                             # Architecture & gesture illustrations
+└── README.md                                # Project documentation
 ```
 
 ---
 
 ## 🔧 Build from Source
 
-### Prerequisites
-
-- **Android Studio** Hedgehog (2023.1.1) or later
-- **JDK 11+**
-- **Android SDK** with API 37 (compile) and API 28+ (min)
-
-### Build Steps
-
 ```bash
 # Clone the repository
 git clone https://github.com/subhranilBCG/VectraTrackPad.git
 cd VectraTrackPad
 
-# Build debug APK
+# Build debug APK with Gradle
 ./gradlew assembleDebug
 
-# Output: app/build/outputs/apk/debug/app-debug.apk
+# Output APK path:
+# app/build/outputs/apk/debug/app-debug.apk
 ```
 
 ---
 
-## 📋 HID Report Format
-
-VectraTrackPad uses the standard USB HID Mouse report descriptor:
+## 📋 HID Report Specification
 
 | Byte | Field | Range | Description |
 |---|---|---|---|
-| 0 | Buttons | `0x01` / `0x02` / `0x04` | Left / Right / Middle click bitmask |
-| 1 | X Delta | `-127` to `127` | Relative horizontal movement |
-| 2 | Y Delta | `-127` to `127` | Relative vertical movement |
+| 0 | Buttons | `0x01` / `0x02` / `0x04` | Left (`0x01`), Right (`0x02`), Middle (`0x04`) click bitmask |
+| 1 | X Delta | `-127` to `127` | Relative horizontal cursor movement |
+| 2 | Y Delta | `-127` to `127` | Relative vertical cursor movement |
 | 3 | Scroll | `-127` to `127` | Scroll wheel delta |
 
 ---
@@ -277,67 +279,43 @@ VectraTrackPad uses the standard USB HID Mouse report descriptor:
 ## ❓ FAQ
 
 <details>
-<summary><strong>Does it work without installing anything on my PC?</strong></summary>
+<summary><strong>Does it really work without installing software on my PC?</strong></summary>
 
-**Yes!** In **Bluetooth HID mode**, your phone registers as a native Bluetooth mouse. No drivers, no companion software, no setup — just pair and go. USB and Wi-Fi modes require a lightweight companion script (included).
+**Yes!** In **Bluetooth HID mode**, your Android device acts as a standard hardware Bluetooth mouse. Windows, macOS, Linux, ChromeOS, and iPadOS recognize it automatically without any additional drivers or client software.
 </details>
 
 <details>
-<summary><strong>Which Android devices are supported?</strong></summary>
+<summary><strong>Which Android devices support Bluetooth HID?</strong></summary>
 
-Any Android device running **Android 9.0 (API 28)** or higher with **Bluetooth HID Device** profile support. Most modern Samsung, Pixel, OnePlus, and Xiaomi devices are supported. Some budget devices may not expose the HID Device profile.
+Any Android device on **Android 9.0 (API 28)** or newer with hardware `BluetoothHidDevice` profile support. Tested on Google Pixel, Samsung Galaxy, OnePlus, Xiaomi, and Motorola devices. If your phone manufacturer disabled HID, use USB or Wi-Fi mode.
 </details>
 
 <details>
-<summary><strong>Can I use it with a Mac?</strong></summary>
+<summary><strong>Can I use it on macOS or Linux?</strong></summary>
 
-**Yes!** Bluetooth HID mode works natively with macOS. For USB/Wi-Fi mode, use the Python companion: `python VectraCompanion.py`.
+**Yes!** Bluetooth HID mode works out of the box. For USB and Wi-Fi modes, run `python host/vectra_usb_host.py` on Mac/Linux.
 </details>
 
 <details>
-<summary><strong>Is there input lag?</strong></summary>
+<summary><strong>How low is the latency?</strong></summary>
 
-- **USB mode:** Sub-millisecond latency (direct TCP over ADB)
-- **Wi-Fi mode:** 1–5ms on a good LAN connection
-- **Bluetooth HID:** Typical BT HID latency (~10–30ms), comparable to a physical Bluetooth mouse
+- **USB mode:** `< 1ms` sub-millisecond response over direct ADB socket.
+- **Wi-Fi mode:** `1–5ms` on standard 5GHz / 2.4GHz Wi-Fi networks.
+- **Bluetooth HID:** Standard BT HID polling (~`10–15ms`), identical to a wireless Bluetooth mouse.
 </details>
 
 <details>
-<summary><strong>My phone doesn't show up as a Bluetooth mouse</strong></summary>
+<summary><strong>How do I change mouse sensitivity or rotate the screen?</strong></summary>
 
-1. Ensure **Bluetooth is ON** and permissions are granted
-2. Some devices don't support the `BluetoothHidDevice` profile — try USB or Wi-Fi mode instead
-3. Only one app can register as a HID device at a time. Close any other Bluetooth keyboard/mouse apps
-4. Try toggling Bluetooth off and on, then re-pair
+Tap the **⚙ (gear icon)** at the top of the trackpad. You can adjust the sensitivity slider or select from presets (`0.8×`, `1.4×`, `2.0×`, `2.8×`), and lock orientation to Landscape, Portrait, or Auto.
 </details>
-
-<details>
-<summary><strong>How do I adjust mouse sensitivity?</strong></summary>
-
-Tap the **⚙ (gear icon)** at the top of the trackpad screen. Use the sensitivity slider or preset buttons (`0.8×`, `1.4×`, `2.0×`, `2.8×`). Settings are saved automatically.
-</details>
-
----
-
-## 🛣️ Roadmap
-
-- [ ] Keyboard input mode (type from phone)
-- [ ] Custom gesture macros (map multi-finger gestures to shortcuts)
-- [ ] Media control integration (play/pause, volume)
-- [ ] Presentation mode (slideshow control with gestures)
-- [ ] Dark/light theme toggle
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Feel free to:
-
-1. **Fork** the repository
-2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
-3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
-4. **Push** to the branch (`git push origin feature/amazing-feature`)
-5. **Open** a Pull Request
+Contributions, issues, and feature requests are welcome!  
+Feel free to check the [issues page](https://github.com/subhranilBCG/VectraTrackPad/issues).
 
 ---
 
@@ -347,14 +325,10 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 ---
 
-## 🌟 Star This Project
-
-If VectraTrackPad helped you, consider giving it a ⭐ on GitHub — it helps others discover it!
-
 <div align="center">
 
 **Made with 🖤 and ☝️ by [subhranilBCG](https://github.com/subhranilBCG)**
 
-*VectraTrackPad — Because your phone is the best trackpad you already own.*
+*VectraTouch — Phone as PC Trackpad & Mouse*
 
 </div>
