@@ -15,7 +15,7 @@
 
 **Driverless Bluetooth HID · Zero-Latency USB · Wi-Fi LAN · Spatial Multi-touch Gestures**
 
-[![Release](https://img.shields.io/badge/release-v1.0.0-00E676?style=for-the-badge&logo=github)](https://github.com/subhranilBCG/VectraTrackPad/releases/latest)
+[![Release](https://img.shields.io/badge/release-v1.0.0-00E676?style=for-the-badge&logo=github)](https://github.com/subhranilBCG/VectraTouch/releases/latest)
 [![Android](https://img.shields.io/badge/Android-API_28+-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com)
 [![Kotlin](https://img.shields.io/badge/Kotlin-1.9+-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)](https://kotlinlang.org)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
@@ -52,7 +52,7 @@ Unlike traditional remote mouse apps that require heavy server software, VectraT
 
 <div align="center">
 
-[![Download APK](https://img.shields.io/badge/⬇_Download_VectraTouch-v1.0.0-00E676?style=for-the-badge&labelColor=0A0D0B)](https://github.com/subhranilBCG/VectraTrackPad/releases/latest/download/VectraTouch-v1.0.0.apk)
+[![Download APK](https://img.shields.io/badge/⬇_Download_VectraTouch-v1.0.0-00E676?style=for-the-badge&labelColor=0A0D0B)](https://github.com/subhranilBCG/VectraTouch/releases/latest/download/VectraTouch-v1.0.0.apk)
 
 </div>
 
@@ -60,7 +60,7 @@ Unlike traditional remote mouse apps that require heavy server software, VectraT
 
 ### Installation Steps
 
-1. Download `VectraTouch-v1.0.0.apk` from the button above (or [GitHub Releases](https://github.com/subhranilBCG/VectraTrackPad/releases/latest)).
+1. Download `VectraTouch-v1.0.0.apk` from the button above (or [GitHub Releases](https://github.com/subhranilBCG/VectraTouch/releases/latest)).
 2. On your Android phone, enable **Install Unknown Apps** for your browser if prompted.
 3. Tap **Install**.
 4. Open **VectraTouch** and grant Bluetooth / Local Network permissions.
@@ -253,8 +253,8 @@ VectraTrackPad/
 
 ```bash
 # Clone the repository
-git clone https://github.com/subhranilBCG/VectraTrackPad.git
-cd VectraTrackPad
+git clone https://github.com/subhranilBCG/VectraTouch.git
+cd VectraTouch
 
 # Build debug APK with Gradle
 ./gradlew assembleDebug
@@ -315,7 +315,7 @@ Tap the **⚙ (gear icon)** at the top of the trackpad. You can adjust the sensi
 ## 🤝 Contributing
 
 Contributions, issues, and feature requests are welcome!  
-Feel free to check the [issues page](https://github.com/subhranilBCG/VectraTrackPad/issues).
+Feel free to check the [issues page](https://github.com/subhranilBCG/VectraTouch/issues).
 
 ---
 
