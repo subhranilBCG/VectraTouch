@@ -1,9 +1,9 @@
 @echo off
 chcp 65001 >nul
-title VectraTrackPad USB Host Companion
+title VectraTouch USB Host Companion
 cls
 echo ============================================================
-echo   VectraTrackPad -- USB Host Companion Launcher
+echo   VectraTouch -- USB Host Companion Launcher
 echo ============================================================
 echo.
 
@@ -30,7 +30,7 @@ cd /d "%~dp0"
 
 echo.
 echo ============================================================
-echo   VectraTrackPad session ended.
+echo   VectraTouch session ended.
 echo ============================================================
 echo Press any key to close this window...
 pause >nul

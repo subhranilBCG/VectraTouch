@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-VectraTrackPad USB Host Companion
+VectraTouch USB & Wi-Fi Host Companion
 ===============================================================================
 Receives high-frequency trackpad HID packets from the phone over a USB cable
-(via ADB port-forwarding or USB Tethering) and dispatches native OS mouse input.
+(via ADB port-forwarding or USB Tethering) or Wi-Fi LAN, and dispatches native OS mouse input.
 
 Features:
   - Zero Dependencies on Windows: Uses Win32 user32.mouse_event directly
@@ -194,8 +194,8 @@ DISCOVERY_PORT = 53826
 
 
 def discover_phone_ip(timeout: float = 3.5) -> str:
-    """Listen for UDP discovery beacon from VectraTrackPad app on the local network."""
-    print(f"[*] Scanning local Wi-Fi for VectraTrackPad (UDP port {DISCOVERY_PORT})...")
+    """Listen for UDP discovery beacon from VectraTouch app on the local network."""
+    print(f"[*] Scanning local Wi-Fi for VectraTouch (UDP port {DISCOVERY_PORT})...")
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -206,7 +206,7 @@ def discover_phone_ip(timeout: float = 3.5) -> str:
         text = data.decode("utf-8", errors="ignore")
         if text.startswith("VECTRA_BEACON"):
             phone_ip = addr[0]
-            print(f"[+] Discovered VectraTrackPad phone at {phone_ip}!")
+            print(f"[+] Discovered VectraTouch phone at {phone_ip}!")
             return phone_ip
     except (socket.timeout, TimeoutError):
         print("[-] Auto-discovery timed out (UDP broadcast might be filtered by router).")
@@ -223,13 +223,13 @@ def discover_phone_ip(timeout: float = 3.5) -> str:
 def run_host(host: str = "127.0.0.1", port: int = DEFAULT_PORT, is_wifi: bool = False):
     title_mode = "Wi-Fi" if is_wifi else "USB"
     print("=" * 60)
-    print(f"  VectraTrackPad -- {title_mode} Host Companion")
+    print(f"  VectraTouch -- {title_mode} Host Companion")
     print("=" * 60)
 
     if not acquire_single_instance_lock(port + 1):
-        print("\n[!] WARNING: Another instance of VectraTrackPad is ALREADY RUNNING!")
+        print("\n[!] WARNING: Another instance of VectraTouch is ALREADY RUNNING!")
         print("    Only one companion window can run at a time.")
-        print("    Please close any other open VectraTrackPad windows first.")
+        print("    Please close any other open VectraTouch windows first.")
         print("=" * 60)
         sys.exit(1)
 
@@ -246,10 +246,10 @@ def run_host(host: str = "127.0.0.1", port: int = DEFAULT_PORT, is_wifi: bool = 
                 if not host:
                     print("[!] No IP entered. Exiting.")
                     sys.exit(1)
-        print(f"[*] Connecting via Wi-Fi to VectraTrackPad at {host}:{port}...")
+        print(f"[*] Connecting via Wi-Fi to VectraTouch at {host}:{port}...")
     else:
         setup_adb_forward(port)
-        print(f"[*] Connecting via USB cable to VectraTrackPad on {host}:{port}...")
+        print(f"[*] Connecting via USB cable to VectraTouch on {host}:{port}...")
 
     retry_count = 0
     while True:
@@ -261,7 +261,7 @@ def run_host(host: str = "127.0.0.1", port: int = DEFAULT_PORT, is_wifi: bool = 
             s.settimeout(None)
 
             transport_label = "Wi-Fi" if is_wifi else "USB"
-            print(f"\n[+] Connected to VectraTrackPad over {transport_label} ({host}:{port})!")
+            print(f"\n[+] Connected to VectraTouch over {transport_label} ({host}:{port})!")
             print("[*] Trackpad is active. Move fingers on phone to control PC cursor.")
             print("[*] Press Ctrl+C to exit.\n")
             retry_count = 0
@@ -290,7 +290,7 @@ def run_host(host: str = "127.0.0.1", port: int = DEFAULT_PORT, is_wifi: bool = 
             if not is_wifi:
                 setup_adb_forward(port)
         except KeyboardInterrupt:
-            print(f"\n[*] Exiting VectraTrackPad {title_mode} Host. Goodbye!")
+            print(f"\n[*] Exiting VectraTouch {title_mode} Host. Goodbye!")
             break
         except Exception as e:
             print(f"\n[!] Unexpected error: {e}")

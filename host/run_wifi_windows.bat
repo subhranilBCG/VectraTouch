@@ -1,9 +1,9 @@
 @echo off
 chcp 65001 >nul
-title VectraTrackPad Wi-Fi Companion
+title VectraTouch Wi-Fi Companion
 cls
 echo ============================================================
-echo   VectraTrackPad -- Wi-Fi Companion Launcher
+echo   VectraTouch -- Wi-Fi Companion Launcher
 echo ============================================================
 echo.
 
@@ -30,7 +30,7 @@ cd /d "%~dp0"
 
 echo.
 echo ============================================================
-echo VectraTrackPad Wi-Fi session ended.
+echo   VectraTouch Wi-Fi session ended.
 echo ============================================================
 echo Press any key to close this window...
 pause >nul

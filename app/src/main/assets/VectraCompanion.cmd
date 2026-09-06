@@ -1,12 +1,12 @@
 <# :
 @echo off
-title VectraTrackPad PC Companion
+title VectraTouch PC Companion
 powershell -NoProfile -ExecutionPolicy Bypass -Command "Invoke-Expression ([System.IO.File]::ReadAllText('%~f0'))"
 pause
 exit /b
 #>
 
-# VectraTrackPad — Zero-Dependency Single-File Windows PC Companion
+# VectraTouch — Zero-Dependency Single-File Windows PC Companion
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
@@ -19,8 +19,8 @@ $DISCOVERY_PORT = 53826
 function Show-Header {
     Clear-Host
     Write-Host "═════════════════════════════════════════════════════════════════" -ForegroundColor Green
-    Write-Host "                VECTRATRACKPAD -- PC COMPANION                    " -ForegroundColor Cyan
-    Write-Host "             Wireless and Wired Low Latency Trackpad              " -ForegroundColor DarkGray
+    Write-Host "                  VECTRATOUCH -- PC COMPANION                    " -ForegroundColor Cyan
+    Write-Host "             Phone as PC Trackpad & Mouse (USB & Wi-Fi)          " -ForegroundColor DarkGray
     Write-Host "═════════════════════════════════════════════════════════════════" -ForegroundColor Green
     Write-Host ""
 }
@@ -30,7 +30,7 @@ function Main-Menu {
     Write-Host "  SELECT CONNECTION METHOD:" -ForegroundColor Yellow
     Write-Host ""
     Write-Host "    [1] Wi-Fi Connect (Auto-Discover / LAN)" -ForegroundColor Green
-    Write-Host "    [2] USB Debugging Connect (ADB Auto Forward)" -ForegroundColor Cyan
+    Write-Host "    [2] USB Debugging Connect (ADB Zero-Latency)" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "─────────────────────────────────────────────────────────────────" -ForegroundColor DarkGreen
     
@@ -40,7 +40,7 @@ function Main-Menu {
 
 function Connect-Wifi {
     Write-Host ""
-    Write-Host "[1/2] Scanning local network for VectraTrackPad UDP beacon..." -ForegroundColor Yellow
+    Write-Host "[1/2] Scanning local network for VectraTouch UDP beacon..." -ForegroundColor Yellow
     $foundIp = ""
     try {
         $udpClient = New-Object System.Net.Sockets.UdpClient
@@ -53,16 +53,16 @@ function Connect-Wifi {
         $msg = [System.Text.Encoding]::UTF8.GetString($bytes)
         if ($msg.StartsWith("VECTRA_BEACON")) {
             $foundIp = $remoteEp.Address.ToString()
-            Write-Host " Auto-Discovered Phone IP: ${foundIp}" -ForegroundColor Green
+            Write-Host "  Auto-Discovered Phone IP: ${foundIp}" -ForegroundColor Green
         }
         $udpClient.Close()
     } catch {
-        Write-Host " UDP beacon scan timed out." -ForegroundColor DarkGray
+        Write-Host "  UDP beacon scan timed out." -ForegroundColor DarkGray
     }
 
     if ([string]::IsNullOrWhiteSpace($foundIp)) {
         Write-Host ""
-        $userInput = Read-Host "  Enter Phone IP Address (e.g. 192.168.1.15)"
+        $userInput = Read-Host "  Enter Phone IP Address (shown on phone status bar)"
         if (-not [string]::IsNullOrWhiteSpace($userInput)) {
             $foundIp = $userInput.Trim()
         }
@@ -92,24 +92,41 @@ function Connect-Usb-Debugging {
     }
 
     if ($adbCmd -ne "") {
-        Write-Host " ADB found: $adbCmd" -ForegroundColor Green
-        Write-Host " Executing: ADB port forward (53824 and 8080)..." -ForegroundColor DarkGray
+        Write-Host "  ADB executable found: $adbCmd" -ForegroundColor Green
+        
+        # Check connected devices
+        $devOutput = & $adbCmd devices 2>&1
+        $deviceLines = $devOutput | Where-Object { $_ -match "\bdevice\b" -and $_ -notmatch "List of devices" }
+        
+        if ($deviceLines) {
+            Write-Host "  Android USB Device detected!" -ForegroundColor Green
+        } else {
+            Write-Host "  Notice: No authorized ADB device found yet. Please check:" -ForegroundColor DarkYellow
+            Write-Host "    - Phone is connected via USB cable" -ForegroundColor Gray
+            Write-Host "    - USB Debugging is turned ON in Developer Options" -ForegroundColor Gray
+            Write-Host "    - Tap 'Allow USB Debugging' on phone screen if prompted" -ForegroundColor Gray
+        }
+
+        Write-Host "  Executing: ADB port forward (ports ${TARGET_PORT} & 8080)..." -ForegroundColor DarkGray
         try {
-            & $adbCmd forward tcp:${TARGET_PORT} tcp:${TARGET_PORT}
-            & $adbCmd forward tcp:8080 tcp:8080
-            Write-Host " Port Forward Active! (tcp:${TARGET_PORT} -> tcp:${TARGET_PORT})" -ForegroundColor Green
+            # Capture output into variables so it is NOT piped into function return stream
+            $fwd1 = & $adbCmd forward tcp:${TARGET_PORT} tcp:${TARGET_PORT} 2>&1 | Out-String
+            $fwd2 = & $adbCmd forward tcp:8080 tcp:8080 2>&1 | Out-String
+            Write-Host "  Port Forward Active: tcp:${TARGET_PORT} -> tcp:${TARGET_PORT}" -ForegroundColor Green
         } catch {
-            Write-Host " ADB forward warning: $($_.Exception.Message)" -ForegroundColor Red
+            Write-Host "  ADB forward warning: $($_.Exception.Message)" -ForegroundColor Red
         }
     } else {
-        Write-Host " ADB executable not found on PATH. Defaulting to 127.0.0.1..." -ForegroundColor DarkYellow
+        Write-Host "  ADB executable not found in PATH. Defaulting to 127.0.0.1..." -ForegroundColor DarkYellow
+        Write-Host "  (Ensure ADB is installed or connect via Wi-Fi mode)" -ForegroundColor DarkGray
     }
+    
     return "127.0.0.1"
 }
 
 function Start-Trackpad-Session([string]$targetIp) {
     Show-Header
-    Write-Host "  STATUS: Connecting to VectraTrackPad at ${targetIp}:${TARGET_PORT}..." -ForegroundColor Cyan
+    Write-Host "  STATUS: Connecting to VectraTouch at ${targetIp}:${TARGET_PORT}..." -ForegroundColor Cyan
     
     $client = $null
     $stream = $null
@@ -122,11 +139,11 @@ function Start-Trackpad-Session([string]$targetIp) {
 
         Show-Header
         Write-Host "  ACTIVE CONNECTION: ${targetIp}:${TARGET_PORT}" -ForegroundColor Green
-        Write-Host "  --------------------------------───────────────────────────────" -ForegroundColor DarkGreen
+        Write-Host "  ───────────────────────────────────────────────────────────────" -ForegroundColor DarkGreen
         Write-Host "  * Move finger on phone  --  Drives PC Mouse Cursor" -ForegroundColor Gray
         Write-Host "  * Tap 1 / 2 / 3 fingers --  Left / Right / Middle Click" -ForegroundColor Gray
         Write-Host "  * Slide 2 fingers       --  Scroll Page" -ForegroundColor Gray
-        Write-Host "  --------------------------------───────────────────────────────" -ForegroundColor DarkGreen
+        Write-Host "  ───────────────────────────────────────────────────────────────" -ForegroundColor DarkGreen
         Write-Host "  [Press Ctrl+C to disconnect and return to menu]" -ForegroundColor Yellow
         Write-Host ""
 

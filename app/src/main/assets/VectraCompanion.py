@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-VectraTrackPad — Python PC Companion Client
+VectraTouch — Python PC Companion Client
 Connects via Wi-Fi (UDP auto-discovery) or USB (TCP socket port 53824).
 Translates 4-byte HID reports into native OS mouse events using Win32 API / ctypes.
 """
@@ -55,13 +55,14 @@ def simulate_mouse(buttons, dx, dy, scroll, prev_buttons):
 
 def main():
     print("=" * 60)
-    print("         VectraTrackPad PC Companion Client (Python)")
+    print("           VectraTouch PC Companion Client (Python)")
+    print("         Phone as PC Trackpad & Mouse (USB & Wi-Fi)")
     print("=" * 60)
 
     phone_ip = None
 
     # 1. Listen for UDP beacon
-    print("[1/3] Scanning local network for VectraTrackPad beacon...")
+    print("[1/3] Scanning local network for VectraTouch beacon...")
     try:
         udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         udp.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -81,7 +82,7 @@ def main():
         ip_input = input("Enter Phone IP Address [Press ENTER for 127.0.0.1]: ").strip()
         phone_ip = ip_input if ip_input else "127.0.0.1"
 
-    print(f"[3/3] Connecting to VectraTrackPad at {phone_ip}:{TARGET_PORT}...")
+    print(f"[3/3] Connecting to VectraTouch at {phone_ip}:{TARGET_PORT}...")
 
     # 3. Connect TCP socket
     try:
