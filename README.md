@@ -1,8 +1,8 @@
 <!-- 
   VectraTouch — README
-  SEO Keywords: Android trackpad app, phone as pc trackpad, phone as mouse, Bluetooth HID mouse,
-  wireless trackpad for pc, USB ADB mouse, Wi-Fi remote mouse, driverless mouse,
-  Android PC controller, spatial gesture trackpad, multi-touch mouse, virtual trackpad
+  SEO Keywords: 3-finger mouse emulation, spatial gesture trackpad, android trackpad app,
+  phone as pc mouse, bluetooth hid mouse, wireless mouse for pc, driverless trackpad,
+  virtual mouse controller, zero latency usb mouse, multi-touch trackpad, edge-to-edge touchpad
 -->
 
 <div align="center">
@@ -11,9 +11,9 @@
 
 # VectraTouch
 
-### Phone as PC Trackpad & Mouse
+### The 3-Finger Spatial Mouse for Android
 
-**Driverless Bluetooth HID · Zero-Latency USB · Wi-Fi LAN · Spatial Multi-touch Gestures**
+**Simulate a True Physical Mouse on Flat Glass · Zero On-Screen Buttons · Blind-Touch Precision**
 
 [![Release](https://img.shields.io/badge/release-v1.0.0-00E676?style=for-the-badge&logo=github)](https://github.com/subhranilBCG/VectraTouch/releases/latest)
 [![Android](https://img.shields.io/badge/Android-API_28+-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com)
@@ -22,27 +22,96 @@
 
 ---
 
-[📥 Download APK](#-download--install) · [🚀 Quick Start](#-quick-start) · [🎯 Features](#-key-features) · [🏗️ Architecture](#%EF%B8%8F-transport-architecture) · [❓ FAQ](#-faq)
+[🖐️ The 3-Finger Innovation](#-the-breakthrough-3-finger-spatial-mouse) · [📥 Download APK](#-download--install) · [🎮 Gesture Guide](#-gesture-mastery--controls) · [🏗️ Architecture](#%EF%B8%8F-how-it-works) · [🚀 Quick Start](#-quick-start)
 
 </div>
 
 ---
 
-## 📖 What is VectraTouch?
+## 💡 The Problem with Traditional Trackpad Apps
 
-**VectraTouch** is a high-performance Android utility that turns your smartphone into a **precision wireless and wired trackpad** for your PC, Mac, or Linux desktop. 
+Every mobile trackpad app before VectraTouch shared the same fundamental flaw: **cramped on-screen buttons**.
 
-Unlike traditional remote mouse apps that require heavy server software, VectraTouch's **Bluetooth HID mode works completely driverless** — your phone pairs directly as a native Bluetooth mouse with zero PC-side installation. When you need ultra-low latency or are in crowded RF environments, switch instantly to **Zero-Latency USB (ADB)** or **Wi-Fi LAN** with UDP auto-discovery.
+```
+❌ Traditional Virtual Trackpads:
+┌────────────────────────────────────────────────────────┐
+│  [  Tiny Left Button  ]        [  Tiny Right Button  ] │  ← You must LOOK DOWN
+├────────────────────────────────────────────────────────┤  ← Miss clicks if thumb drifts
+│                                                        │  ← Wastes 40% of the screen
+│                   Cramped Touch Area                   │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+```
 
-### Why VectraTouch?
+When using a real physical mouse, **your eyes never leave your monitor**. You instinctively know where your index, middle, and ring fingers are resting. On flat glass, however, static buttons force you to look away from your screen to make sure your fingers are aligned.
 
-| Problem | VectraTouch Solution |
-|---|---|
-| 🖱️ Forgot your mouse or touchpad broken? | Turn your phone into a precision trackpad in seconds |
-| 📦 Don't want to install software on work PC? | **Bluetooth HID is 100% driverless** — native OS pairing |
-| 🎮 Need zero lag for gaming or design? | **USB mode (ADB)** with sub-millisecond packet delivery |
-| 🌐 Want wireless without Bluetooth pairing? | **Wi-Fi LAN mode** with instant UDP auto-discovery |
-| 😤 Tired of cramped on-screen buttons? | **Full edge-to-edge trackpad** with smart spatial finger sorting |
+---
+
+## 🖐️ The Breakthrough: 3-Finger Spatial Mouse
+
+<img src="docs/images/mouse_emulation_concept.jpg" alt="VectraTouch 3-Finger Spatial Mouse Emulation vs Physical Mouse" width="100%"/>
+
+**VectraTouch replaces fixed UI buttons with dynamic Spatial X-Coordinate Sorting.**
+
+Instead of forcing your fingers into specific boxes on the screen, VectraTouch turns your **entire phone display into an edge-to-edge tracking surface**. The moment your fingers touch the glass, our spatial engine dynamically sorts their horizontal positions:
+
+<img src="docs/images/spatial_sorting.jpg" alt="VectraTouch 3-Finger Spatial Sorting Diagram" width="100%"/>
+
+| Finger Position | Dynamic Role | Mouse Action |
+|:---:|:---:|:---|
+| 👈 **Leftmost Finger (Index)** | **Left Click & Hold** | Primary click, double-click, and text/window dragging |
+| 👆 **Center Finger (Anchor)** | **Cursor Driver** | Sub-pixel tracking (`dx`, `dy`) across your PC desktop |
+| 👉 **Rightmost Finger (Ring)** | **Right Click & Context** | Context menus, right-click actions, and alternate options |
+
+> 🌟 **Zero-Look Ergonomics:** Rest your hand anywhere on the screen naturally. Left is always left click, right is always right click, and the center steers — exactly like resting your hand on a physical desktop mouse.
+
+---
+
+## 🎮 Gesture Mastery & Controls
+
+VectraTouch brings fluid desktop workflows to touchscreen glass with a dedicated 6-state multi-touch engine:
+
+```mermaid
+stateDiagram-v2
+    [*] --> IDLE
+    IDLE --> CURSOR_MOVE : 1 Finger Drag
+    IDLE --> LEFT_HELD : 2 Fingers (Left Flank Down)
+    IDLE --> RIGHT_HELD : 2 Fingers (Right Flank Down)
+    IDLE --> SCROLL_MODE : 2 Fingers (Vertical Swipe)
+    IDLE --> MIDDLE_CLICK : 3 Fingers (Simultaneous Tap)
+
+    CURSOR_MOVE --> IDLE : Release
+    LEFT_HELD --> IDLE : Release
+    RIGHT_HELD --> IDLE : Release
+    SCROLL_MODE --> IDLE : Release
+    MIDDLE_CLICK --> IDLE : Release
+```
+
+### 🎯 Gesture Cheat Sheet
+
+| Gesture | How to Perform | Desktop Action |
+|---|---|---|
+| 🖱️ **Cursor Move** | Drag **1 finger** across the display | Move PC mouse pointer smoothly |
+| 🔘 **Left Click** | Tap **1 finger** OR tap the **left flank** with 2 fingers | Standard primary click |
+| 🔘 **Right Click** | Tap the **right flank** with 2 fingers | Open context / right-click menu |
+| 📦 **Click & Drag** | **Hold left finger down** while **moving center finger** | Select text, drag windows, lasso select in CAD/games |
+| 📜 **Precision Scroll** | Swipe up/down with **2 fingers simultaneously** | Smooth vertical page / document scrolling |
+| 🌐 **Middle Click** | Tap **3 fingers simultaneously** anywhere | Open link in new browser tab / close tab |
+
+---
+
+## 🔀 Tri-Mode Transport: Zero-Lag Connectivity
+
+Underneath the spatial gesture engine, VectraTouch provides three physical transport layers managed by an intelligent coordinator:
+
+<img src="docs/images/transport_architecture.jpg" alt="VectraTouch Transport Architecture — Bluetooth, USB, and Wi-Fi" width="100%"/>
+
+| Transport | Protocol | Setup Required | Best For |
+|---|---|:---:|---|
+| **🔵 Bluetooth HID** | Standard 4-Byte USB HID Descriptor | **Zero (Driverless)** | Office work, presentations, travel — pairs as a native OS mouse |
+| **🔌 USB (ADB)** | Direct TCP on `127.0.0.1:53824` | 1-Click Script | Zero-latency gaming, audio/video editing, RF-crowded spaces |
+| **📶 Wi-Fi (LAN)** | TCP + UDP Beacon (`53826`) | 1-Click Script | Wireless control across your room without Bluetooth pairing |
+| **⚡ AUTO Mode** | Dynamic Priority Switcher | Auto | Intelligently falls back from USB → Wi-Fi → Bluetooth HID |
 
 ---
 
@@ -56,272 +125,182 @@ Unlike traditional remote mouse apps that require heavy server software, VectraT
 
 </div>
 
-> **System Requirements:** Android 9.0+ (API 28) · Bluetooth or USB debugging enabled
+> **Requirements:** Android 9.0+ (API 28) · Bluetooth or USB Debugging enabled
 
 ### Installation Steps
 
-1. Download `VectraTouch-v1.0.0.apk` from the button above (or [GitHub Releases](https://github.com/subhranilBCG/VectraTouch/releases/latest)).
-2. On your Android phone, enable **Install Unknown Apps** for your browser if prompted.
-3. Tap **Install**.
-4. Open **VectraTouch** and grant Bluetooth / Local Network permissions.
-
----
-
-## 🎯 Key Features
-
-### 🔀 Tri-Mode Transport — Connect Your Way
-
-<img src="docs/images/transport_architecture.jpg" alt="VectraTouch transport architecture — Bluetooth, USB, and Wi-Fi connections" width="100%"/>
-
-| Mode | How It Works | Best For |
-|---|---|---|
-| **🔵 Bluetooth HID** | Pairs as a native OS mouse — **no software needed on PC** | Everyday browsing, presentations, travel |
-| **🔌 USB (ADB)** | Direct TCP over USB cable — zero packet latency | Gaming, CAD/editing, crowded Wi-Fi |
-| **📶 Wi-Fi (LAN)** | TCP over local network + UDP auto-discovery beacon | Wireless freedom without Bluetooth pairing |
-| **⚡ AUTO** | Intelligently selects the fastest active connection | Seamless automatic switching |
-
----
-
-### 🖐️ Spatial Multi-touch Sorting — No Static Buttons
-
-<img src="docs/images/spatial_sorting.jpg" alt="VectraTouch 3-finger spatial sorting — dynamic finger role assignment" width="100%"/>
-
-Instead of clumsy on-screen buttons that waste screen real estate, VectraTouch dynamically calculates finger roles based on horizontal (X-axis) coordinates across the whole display:
-
-| Fingers | Gesture | Action |
-|---|---|---|
-| ☝️ **1 finger** | Drag anywhere | **Cursor movement** |
-| ☝️☝️ **2 fingers** | Left finger tap / hold | **Left click / drag & drop** |
-| ☝️☝️ **2 fingers** | Right finger tap / hold | **Right click** |
-| ☝️☝️ **2 fingers** | Both fingers swipe up/down | **Natural smooth scroll** |
-| ☝️☝️☝️ **3 fingers** | Simultaneous tap | **Middle click** |
-| ☝️☝️ **2 fingers** | Quick tap (either side) | **Tap-to-click** |
-
----
-
-### ⚙️ In-App Glassmorphic Settings
-
-- **Cursor Sensitivity** — Fine-tune speed from `0.8×` to `2.8×` with instant presets and touch slider.
-- **Orientation Modes** — Landscape, Reverse Landscape, Portrait, or Auto Sensor.
-- **Persistent Preferences** — Remembers your sensitivity and preferred transport mode across launches.
-
----
-
-### 🎨 Cyber Aesthetic UI
-
-- **Matte Black** (`#0A0D0B`) background with **Cyber Green** (`#00E676`) glowing touch indicators.
-- Non-intrusive watermark gesture HUD cards on canvas.
-- Real-time connection badge with live IP/port indicators.
-- Immersive edge-to-edge layout with full camera cutout / notch support.
-
----
-
-## 🏗️ Transport Architecture
-
-```mermaid
-graph LR
-    subgraph Phone["📱 Android Phone (VectraTouch)"]
-        TV["TrackpadView<br/>Multi-touch Engine"]
-        TTM["TrackpadTransportManager<br/>AUTO | BT | USB | WIFI"]
-        BHM["BluetoothHidManager"]
-        UTS["UsbTrackpadServer<br/>TCP :53824"]
-    end
-
-    TV -->|"gestures"| TTM
-    TTM --> BHM
-    TTM --> UTS
-
-    subgraph PC["💻 Host PC / Mac / Linux"]
-        OS["OS HID Mouse Driver"]
-        Companion["VectraCompanion<br/>(.py / .cmd / .ps1)"]
-    end
-
-    BHM -->|"Bluetooth HID<br/>(Driverless)"| OS
-    UTS -->|"USB (ADB Forward)<br/>TCP :53824"| Companion
-    UTS -->|"Wi-Fi (LAN)<br/>TCP :53824"| Companion
-    Companion -->|"mouse_event / pynput"| OS
-
-    style Phone fill:#0A0D0B,stroke:#00E676,color:#E8FCE8
-    style PC fill:#0A0D0B,stroke:#00897B,color:#E8FCE8
-```
-
-### Gesture State Machine
-
-```mermaid
-stateDiagram-v2
-    [*] --> IDLE
-    IDLE --> CURSOR_MOVE : 1 finger down
-    IDLE --> LEFT_HELD : 2 fingers (left tap)
-    IDLE --> RIGHT_HELD : 2 fingers (right tap)
-    IDLE --> SCROLL_MODE : 2 fingers (both swipe)
-    IDLE --> MIDDLE_CLICK : 3 fingers (tap)
-
-    CURSOR_MOVE --> IDLE : finger up
-    LEFT_HELD --> IDLE : fingers up
-    RIGHT_HELD --> IDLE : fingers up
-    SCROLL_MODE --> IDLE : fingers up
-    MIDDLE_CLICK --> IDLE : fingers up
-```
+1. **Download** `VectraTouch-v1.0.0.apk` from the button above (or [GitHub Releases](https://github.com/subhranilBCG/VectraTouch/releases/latest)).
+2. **Install** the APK on your Android phone.
+3. **Launch** VectraTouch and grant Bluetooth / Network permissions.
 
 ---
 
 ## 🚀 Quick Start
 
-### Mode 1: Bluetooth HID (Driverless — Zero Setup on PC)
-
-1. **Launch VectraTouch** on your phone.
-2. Select the **`BT`** tab (or leave on `AUTO`).
-3. On your **PC/Mac**, open **Bluetooth Settings → Add Device**.
-4. Select your phone from the list — it pairs as a standard **Bluetooth mouse**.
-5. **Done!** Move your finger on your phone screen to control the cursor.
+### 1. Bluetooth HID Mode (Driverless — No PC Software)
+1. Open **VectraTouch** and select the **`BT`** tab (or `AUTO`).
+2. On your PC/Mac, open **Bluetooth Settings → Add Device**.
+3. Select your phone — it pairs instantly as a standard **Bluetooth Mouse**.
+4. Start moving your fingers — zero software needed on your computer!
 
 ---
 
-### Mode 2: USB (ADB — Zero Latency)
-
-1. Connect your phone to your PC via USB cable.
-2. Enable **USB Debugging** on your phone (*Settings → Developer Options*).
-3. On your PC, forward the port with ADB:
-   ```bash
-   adb forward tcp:53824 tcp:53824
-   ```
-4. Run the companion script:
-   - **Windows:** Double-click `host/run_usb_windows.bat`
-   - **Cross-Platform:** `python host/vectra_usb_host.py`
-5. Select the **`USB`** tab in VectraTouch.
+### 2. USB Mode (Zero Latency over USB Cable)
+1. Connect your phone to your PC with a USB cable and enable **USB Debugging**.
+2. Run the companion script on your PC:
+   - **Windows:** Double-click [`host/run_usb_windows.bat`](host/run_usb_windows.bat) or [`VectraCompanion.cmd`](app/src/main/assets/VectraCompanion.cmd)
+   - **Python (Mac/Linux):** `python host/vectra_usb_host.py`
+3. Select the **`USB`** tab on your phone — enjoy sub-millisecond cursor response!
 
 ---
 
-### Mode 3: Wi-Fi (LAN — Wireless without Bluetooth)
-
-1. Connect phone and PC to the **same Wi-Fi network**.
-2. Launch VectraTouch and select the **`WIFI`** tab (note the displayed phone IP).
-3. Run the companion script on your PC:
-   - **Windows (1-click):** Double-click `host/run_wifi_windows.bat`
-   - **Python:** `python host/vectra_usb_host.py --wifi`
-   - *(The companion auto-discovers your phone via UDP beacon on port `53826`)*
-4. Cursor control begins immediately!
+### 3. Wi-Fi Mode (Wireless LAN with Auto-Discovery)
+1. Connect your phone and PC to the **same Wi-Fi network**.
+2. Open VectraTouch and tap the **`WIFI`** tab.
+3. Run [`host/run_wifi_windows.bat`](host/run_wifi_windows.bat) or `python host/vectra_usb_host.py --wifi`.
+4. The companion automatically discovers your phone via UDP beacon — cursor control starts instantly!
 
 ---
 
-### 📦 Built-In Offline Companion Web Server
+### 📦 Offline In-App Companion Web Server
 
-Don't have the companion script on your PC? VectraTouch runs an offline web server on your phone:
+If you ever need the PC companion script without internet access:
+1. Connect to the same Wi-Fi or USB tethering.
+2. Open `http://<PHONE_IP>:8080` in your PC browser (hosted directly inside the app).
+3. Download the standalone Windows (`.cmd`) or Python (`.py`) companion client right from your phone.
 
-1. Open `http://<PHONE_IP>:8080` in your PC browser.
-2. Download `VectraCompanion.cmd` or `VectraCompanion.py` directly from your phone.
+---
 
-| Companion Script | OS Support | Dependencies |
-|---|---|---|
-| `VectraCompanion.cmd` | Windows | None (native PowerShell wrapper) |
-| `VectraCompanion.ps1` | Windows | Built-in PowerShell |
-| `VectraCompanion.py` | Windows / Mac / Linux | Python 3 + `pynput` |
+## ⚙️ In-Canvas Glassmorphic Settings
+
+Tap the **⚙ (gear icon)** at the top of the trackpad to customize:
+* **Cursor Sensitivity Stepper:** Fine-tune speed (`0.4×` to `3.6×`) or tap presets (`0.8×`, `1.4×`, `2.0×`, `2.8×`).
+* **Display Orientation Lock:** Landscape, Reverse Landscape, Portrait, or Auto-Sensor.
+* **Haptic Feedback:** Tactile vibration pulses on clicks and gesture triggers.
+* **Persistent Storage:** Preferences saved automatically via Android `SharedPreferences`.
+
+---
+
+## 🏗️ How It Works
+
+```mermaid
+graph TD
+    subgraph MultiTouch["📱 Multi-Touch Engine"]
+        A["Touch Down (1-3 Pointers)"] --> B["Spatial X-Coordinate Sorting"]
+        B --> C{"Active Gesture Match"}
+        C -->|"1 Finger"| D["Cursor Delta dx, dy"]
+        C -->|"Left Flank Down"| E["Left Click 0x01 + Drag"]
+        C -->|"Right Flank Down"| F["Right Click 0x02"]
+        C -->|"2 Finger Drag"| G["Scroll Wheel Delta"]
+        C -->|"3 Finger Tap"| H["Middle Click 0x04"]
+    end
+
+    subgraph Transport["⚡ Quad-Mode Transport Manager"]
+        D & E & F & G & H --> TTM["TrackpadTransportManager"]
+        TTM -->|"Driverless"| BT["Bluetooth HID Device API"]
+        TTM -->|"Zero-Latency TCP"| USB["USB Socket :53824"]
+        TTM -->|"Wireless LAN"| WIFI["Wi-Fi Socket :53824"]
+    end
+
+    subgraph Host["💻 Host Computer"]
+        BT -->|"Native OS HID"| OS["Windows / macOS / Linux Mouse"]
+        USB & WIFI -->|"VectraCompanion"| USER32["Win32 mouse_event / pynput"]
+        USER32 --> OS
+    end
+
+    style MultiTouch fill:#0A0D0B,stroke:#00E676,color:#E8FCE8
+    style Transport fill:#0A0D0B,stroke:#00897B,color:#E8FCE8
+    style Host fill:#0A0D0B,stroke:#00B0FF,color:#E8FCE8
+```
 
 ---
 
 ## 📁 Project Structure
 
 ```
-VectraTrackPad/
+VectraTouch/
 ├── app/
 │   ├── src/main/
 │   │   ├── java/com/example/vectratrackpad/
-│   │   │   ├── MainActivity.kt              # Fullscreen, permissions, lifecycle
-│   │   │   ├── TrackpadView.kt              # Canvas engine, gestures, HUD
-│   │   │   ├── TrackpadTransportManager.kt  # Multi-transport coordinator
-│   │   │   ├── BluetoothHidManager.kt       # BT HID profile & reports
-│   │   │   ├── UsbTrackpadServer.kt         # TCP server + UDP beacon
-│   │   │   └── CompanionHttpServer.kt       # HTTP server (port 8080)
+│   │   │   ├── MainActivity.kt              # Immersive fullscreen & permissions
+│   │   │   ├── TrackpadView.kt              # 3-Finger spatial engine & Canvas HUD
+│   │   │   ├── TrackpadTransportManager.kt  # Transport coordinator (AUTO/BT/USB/WIFI)
+│   │   │   ├── BluetoothHidManager.kt       # Android Bluetooth HID device profile
+│   │   │   ├── UsbTrackpadServer.kt         # Non-blocking TCP server + UDP beacon
+│   │   │   └── CompanionHttpServer.kt       # Offline companion web server (port 8080)
 │   │   ├── assets/
-│   │   │   ├── index.html                   # Offline companion web page
-│   │   │   ├── VectraCompanion.cmd          # Windows batch launcher
-│   │   │   ├── VectraCompanion.ps1          # PowerShell companion
-│   │   │   └── VectraCompanion.py           # Python companion
-│   │   └── res/                             # Vector drawables, themes, strings
-│   └── build.gradle.kts                     # App Gradle build config (v1.0.0)
+│   │   │   ├── index.html                   # Offline browser landing page
+│   │   │   ├── VectraCompanion.cmd          # 1-Click zero-dependency Windows client
+│   │   │   ├── VectraCompanion.ps1          # PowerShell mouse_event companion
+│   │   │   └── VectraCompanion.py           # Python cross-platform client
+│   │   └── res/                             # Cyber green themes, vectors & drawables
+│   └── build.gradle.kts                     # Gradle configuration (v1.0.0)
 ├── host/
-│   ├── vectra_usb_host.py                   # PC Python host script
-│   ├── run_usb_windows.bat                  # 1-click Windows USB launcher
-│   └── run_wifi_windows.bat                 # 1-click Windows Wi-Fi launcher
-├── docs/images/                             # Architecture & gesture illustrations
+│   ├── vectra_usb_host.py                   # Python companion with single-instance lock
+│   ├── run_usb_windows.bat                  # 1-Click USB launcher
+│   └── run_wifi_windows.bat                 # 1-Click Wi-Fi launcher
+├── docs/images/                             # High-resolution architectural diagrams
 └── README.md                                # Project documentation
 ```
 
 ---
 
-## 🔧 Build from Source
+## 🔧 Building from Source
 
 ```bash
-# Clone the repository
+# 1. Clone repository
 git clone https://github.com/subhranilBCG/VectraTouch.git
 cd VectraTouch
 
-# Build debug APK with Gradle
-./gradlew assembleDebug
+# 2. Build signed release APK with Gradle
+./gradlew assembleRelease
 
-# Output APK path:
-# app/build/outputs/apk/debug/app-debug.apk
+# Output: app/build/outputs/apk/release/app-release.apk
 ```
 
 ---
 
-## 📋 HID Report Specification
-
-| Byte | Field | Range | Description |
-|---|---|---|---|
-| 0 | Buttons | `0x01` / `0x02` / `0x04` | Left (`0x01`), Right (`0x02`), Middle (`0x04`) click bitmask |
-| 1 | X Delta | `-127` to `127` | Relative horizontal cursor movement |
-| 2 | Y Delta | `-127` to `127` | Relative vertical cursor movement |
-| 3 | Scroll | `-127` to `127` | Scroll wheel delta |
-
----
-
-## ❓ FAQ
+## ❓ Frequently Asked Questions
 
 <details>
-<summary><strong>Does it really work without installing software on my PC?</strong></summary>
+<summary><strong>Why is 3-finger spatial sorting better than on-screen buttons?</strong></summary>
 
-**Yes!** In **Bluetooth HID mode**, your Android device acts as a standard hardware Bluetooth mouse. Windows, macOS, Linux, ChromeOS, and iPadOS recognize it automatically without any additional drivers or client software.
+Physical buttons work on a hardware mouse because tactile edges guide your fingers. On flat smartphone glass, you can't feel where buttons start or end, forcing you to look down at your hands. 
+
+VectraTouch dynamically assigns finger roles based on their **relative horizontal positions**, meaning your hand can rest anywhere on the screen naturally without you ever taking your eyes off your computer monitor.
 </details>
 
 <details>
-<summary><strong>Which Android devices support Bluetooth HID?</strong></summary>
+<summary><strong>Can I drag windows and select text with this gesture system?</strong></summary>
 
-Any Android device on **Android 9.0 (API 28)** or newer with hardware `BluetoothHidDevice` profile support. Tested on Google Pixel, Samsung Galaxy, OnePlus, Xiaomi, and Motorola devices. If your phone manufacturer disabled HID, use USB or Wi-Fi mode.
+**Yes!** Simply place your index (left) finger down to engage Left Click / Hold, and move your middle (anchor) finger to drag files, select code/text, or drag application windows across your desktop.
 </details>
 
 <details>
-<summary><strong>Can I use it on macOS or Linux?</strong></summary>
+<summary><strong>Does Bluetooth HID mode require installing any software on my PC?</strong></summary>
 
-**Yes!** Bluetooth HID mode works out of the box. For USB and Wi-Fi modes, run `python host/vectra_usb_host.py` on Mac/Linux.
+**No.** In Bluetooth HID mode, your Android device registers directly as a hardware Bluetooth mouse with Windows, macOS, Linux, ChromeOS, and iPadOS. It requires zero drivers and zero third-party software on your computer.
 </details>
 
 <details>
-<summary><strong>How low is the latency?</strong></summary>
+<summary><strong>When should I use USB or Wi-Fi mode instead of Bluetooth?</strong></summary>
 
-- **USB mode:** `< 1ms` sub-millisecond response over direct ADB socket.
-- **Wi-Fi mode:** `1–5ms` on standard 5GHz / 2.4GHz Wi-Fi networks.
-- **Bluetooth HID:** Standard BT HID polling (~`10–15ms`), identical to a wireless Bluetooth mouse.
-</details>
-
-<details>
-<summary><strong>How do I change mouse sensitivity or rotate the screen?</strong></summary>
-
-Tap the **⚙ (gear icon)** at the top of the trackpad. You can adjust the sensitivity slider or select from presets (`0.8×`, `1.4×`, `2.0×`, `2.8×`), and lock orientation to Landscape, Portrait, or Auto.
+- **USB mode:** Ideal for precision gaming, CAD, audio/video editing, or environments with heavy Bluetooth/2.4GHz interference where sub-millisecond response is critical.
+- **Wi-Fi mode:** Ideal when you want wireless control from across the room without needing to pair Bluetooth devices.
 </details>
 
 ---
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome!  
-Feel free to check the [issues page](https://github.com/subhranilBCG/VectraTouch/issues).
+Contributions, issues, and feature suggestions are always welcome!  
+Feel free to open an issue on the [Issues Page](https://github.com/subhranilBCG/VectraTouch/issues).
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
 
 ---
 
@@ -329,6 +308,6 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 **Made with 🖤 and ☝️ by [subhranilBCG](https://github.com/subhranilBCG)**
 
-*VectraTouch — Phone as PC Trackpad & Mouse*
+*VectraTouch — Because your phone is the best trackpad you already own.*
 
 </div>
