@@ -89,6 +89,76 @@ if is_windows:
 
         last_buttons = buttons
 
+    KEYEVENTF_KEYUP = 0x0002
+    import ctypes.wintypes
+    VkKeyScanW = user32.VkKeyScanW
+    VkKeyScanW.argtypes = [ctypes.wintypes.WCHAR]
+    VkKeyScanW.restype = ctypes.c_short
+
+    VK_MAP = {
+        0x01: 0x0D,  # Enter
+        0x02: 0x08,  # Backspace
+        0x03: 0x09,  # Tab
+        0x04: 0x1B,  # Escape
+        0x05: 0x2E,  # Delete
+        0x06: 0x26,  # Arrow Up
+        0x07: 0x28,  # Arrow Down
+        0x08: 0x25,  # Arrow Left
+        0x09: 0x27,  # Arrow Right
+        0x0A: 0x24,  # Home
+        0x0B: 0x23,  # End
+    }
+    VK_SHIFT = 0x10
+    VK_CONTROL = 0x11
+    VK_MENU = 0x12  # Alt
+
+    def send_key_press(vk, scan=0):
+        user32.keybd_event(vk, scan, 0, 0)
+        user32.keybd_event(vk, scan, KEYEVENTF_KEYUP, 0)
+
+    def send_special_key(key_code: int, meta_flags: int):
+        vk = VK_MAP.get(key_code)
+        if vk is None:
+            return
+        if meta_flags & 0x01:
+            user32.keybd_event(VK_SHIFT, 0, 0, 0)
+        if meta_flags & 0x02:
+            user32.keybd_event(VK_CONTROL, 0, 0, 0)
+        if meta_flags & 0x04:
+            user32.keybd_event(VK_MENU, 0, 0, 0)
+
+        send_key_press(vk)
+
+        if meta_flags & 0x04:
+            user32.keybd_event(VK_MENU, 0, KEYEVENTF_KEYUP, 0)
+        if meta_flags & 0x02:
+            user32.keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0)
+        if meta_flags & 0x01:
+            user32.keybd_event(VK_SHIFT, 0, KEYEVENTF_KEYUP, 0)
+
+    def send_text(text: str):
+        for ch in text:
+            result = VkKeyScanW(ch)
+            if result == -1:
+                continue
+            vk = result & 0xFF
+            shift_state = (result >> 8) & 0xFF
+            if shift_state & 0x01:
+                user32.keybd_event(VK_SHIFT, 0, 0, 0)
+            if shift_state & 0x02:
+                user32.keybd_event(VK_CONTROL, 0, 0, 0)
+            if shift_state & 0x04:
+                user32.keybd_event(VK_MENU, 0, 0, 0)
+
+            send_key_press(vk)
+
+            if shift_state & 0x04:
+                user32.keybd_event(VK_MENU, 0, KEYEVENTF_KEYUP, 0)
+            if shift_state & 0x02:
+                user32.keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0)
+            if shift_state & 0x01:
+                user32.keybd_event(VK_SHIFT, 0, KEYEVENTF_KEYUP, 0)
+
 else:
     # Fallback for macOS / Linux using pynput if installed
     try:
@@ -119,6 +189,12 @@ else:
         print("[!] On non-Windows platforms, please install pynput: pip install pynput")
         def dispatch_mouse(buttons: int, dx: int, dy: int, scroll: int):
             pass
+
+    def send_special_key(key_code: int, meta_flags: int):
+        pass
+
+    def send_text(text: str):
+        pass
 
 
 def find_adb():
@@ -220,6 +296,17 @@ def discover_phone_ip(timeout: float = 3.5) -> str:
     return None
 
 
+def recv_exact(sock: socket.socket, count: int) -> bytes:
+    """Read exactly 'count' bytes from socket."""
+    data = b""
+    while len(data) < count:
+        chunk = sock.recv(count - len(data))
+        if not chunk:
+            raise ConnectionResetError("Socket closed by phone")
+        data += chunk
+    return data
+
+
 def run_host(host: str = "127.0.0.1", port: int = DEFAULT_PORT, is_wifi: bool = False):
     title_mode = "Wi-Fi" if is_wifi else "USB"
     print("=" * 60)
@@ -262,24 +349,37 @@ def run_host(host: str = "127.0.0.1", port: int = DEFAULT_PORT, is_wifi: bool = 
 
             transport_label = "Wi-Fi" if is_wifi else "USB"
             print(f"\n[+] Connected to VectraTouch over {transport_label} ({host}:{port})!")
-            print("[*] Trackpad is active. Move fingers on phone to control PC cursor.")
+            print("[*] Trackpad & Keyboard active. Move fingers on phone to control PC cursor.")
             print("[*] Press Ctrl+C to exit.\n")
             retry_count = 0
 
             while True:
-                data = b""
-                while len(data) < 4:
-                    chunk = s.recv(4 - len(data))
-                    if not chunk:
-                        raise ConnectionResetError("Socket closed by phone")
-                    data += chunk
+                header = recv_exact(s, 1)
+                ptype = header[0]
 
-                buttons = data[0]
-                dx, dy, scroll = struct.unpack("bbb", data[1:4])
-                try:
-                    dispatch_mouse(buttons, dx, dy, scroll)
-                except Exception:
-                    pass
+                if ptype == 0xAA:
+                    # Keyboard text packet: [0xAA, len_high, len_low, ...utf8...]
+                    len_buf = recv_exact(s, 2)
+                    text_len = (len_buf[0] << 8) | len_buf[1]
+                    if 0 < text_len <= 65535:
+                        text_buf = recv_exact(s, text_len)
+                        text = text_buf.decode('utf-8', errors='replace')
+                        send_text(text)
+
+                elif ptype == 0xAB:
+                    # Special key packet: [0xAB, keyCode, metaFlags]
+                    key_buf = recv_exact(s, 2)
+                    send_special_key(key_buf[0], key_buf[1])
+
+                else:
+                    # Mouse report: [buttons(=ptype), dx, dy, scroll]
+                    mouse_buf = recv_exact(s, 3)
+                    buttons = ptype
+                    dx, dy, scroll = struct.unpack("bbb", mouse_buf)
+                    try:
+                        dispatch_mouse(buttons, dx, dy, scroll)
+                    except Exception:
+                        pass
 
         except (socket.error, ConnectionResetError, socket.timeout) as e:
             now_str = time.strftime("%H:%M:%S")

@@ -377,6 +377,62 @@ class UsbTrackpadServer(
         return true
     }
 
+    /**
+     * Send keyboard text over the TCP socket.
+     * Protocol: [0xAA, len_high, len_low, ...utf8_bytes...]
+     *
+     * @param text  The text string to transmit (UTF-8 encoded)
+     * @return true if enqueued successfully
+     */
+    fun sendKeyboardText(text: String): Boolean {
+        if (!isConnected()) return false
+        if (text.isEmpty()) return false
+
+        val utf8Bytes = text.toByteArray(Charsets.UTF_8)
+        val len = utf8Bytes.size.coerceAtMost(65535)  // Cap at 64KB
+
+        val packet = ByteArray(3 + len)
+        packet[0] = 0xAA.toByte()               // Type: keyboard text
+        packet[1] = ((len shr 8) and 0xFF).toByte()  // Length high byte
+        packet[2] = (len and 0xFF).toByte()           // Length low byte
+        System.arraycopy(utf8Bytes, 0, packet, 3, len)
+
+        if (!sendQueue.offer(packet)) {
+            sendQueue.poll()
+            sendQueue.offer(packet)
+        }
+        return true
+    }
+
+    /**
+     * Send a special key event over the TCP socket.
+     * Protocol: [0xAB, keyCode, metaFlags]
+     *
+     * Special key codes:
+     *   0x01=Enter, 0x02=Backspace, 0x03=Tab, 0x04=Escape,
+     *   0x05=Delete, 0x06=ArrowUp, 0x07=ArrowDown,
+     *   0x08=ArrowLeft, 0x09=ArrowRight, 0x0A=Home, 0x0B=End
+     *
+     * @param keyCode    The special key code
+     * @param metaFlags  Modifier flags (0x01=Shift, 0x02=Ctrl, 0x04=Alt)
+     * @return true if enqueued successfully
+     */
+    fun sendSpecialKey(keyCode: Int, metaFlags: Int = 0): Boolean {
+        if (!isConnected()) return false
+
+        val packet = byteArrayOf(
+            0xAB.toByte(),
+            (keyCode and 0xFF).toByte(),
+            (metaFlags and 0xFF).toByte()
+        )
+
+        if (!sendQueue.offer(packet)) {
+            sendQueue.poll()
+            sendQueue.offer(packet)
+        }
+        return true
+    }
+
     fun isConnected(): Boolean {
         val s = activeClientSocket
         return (s != null && s.isConnected && !s.isClosed) || isHidg0Available

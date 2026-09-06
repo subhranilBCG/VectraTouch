@@ -15,7 +15,7 @@
 
 **Simulate a True Physical Mouse on Flat Glass · Zero On-Screen Buttons · Blind-Touch Precision**
 
-[![Release](https://img.shields.io/badge/release-v1.0.0-00E676?style=for-the-badge&logo=github)](https://github.com/subhranilBCG/VectraTouch/releases/latest)
+[![Release](https://img.shields.io/badge/release-v1.1.0-00E676?style=for-the-badge&logo=github)](https://github.com/subhranilBCG/VectraTouch/releases/latest)
 [![Android](https://img.shields.io/badge/Android-API_28+-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com)
 [![Kotlin](https://img.shields.io/badge/Kotlin-1.9+-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)](https://kotlinlang.org)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
@@ -121,7 +121,7 @@ Underneath the spatial gesture engine, VectraTouch provides three physical trans
 
 <div align="center">
 
-[![Download APK](https://img.shields.io/badge/⬇_Download_VectraTouch-v1.0.0-00E676?style=for-the-badge&labelColor=0A0D0B)](https://github.com/subhranilBCG/VectraTouch/releases/latest/download/VectraTouch-v1.0.0.apk)
+[![Download APK](https://img.shields.io/badge/⬇_Download_VectraTouch-v1.1.0-00E676?style=for-the-badge&labelColor=0A0D0B)](https://github.com/subhranilBCG/VectraTouch/releases/latest/download/VectraTouch-v1.1.0.apk)
 
 </div>
 
@@ -129,7 +129,7 @@ Underneath the spatial gesture engine, VectraTouch provides three physical trans
 
 ### Installation Steps
 
-1. **Download** `VectraTouch-v1.0.0.apk` from the button above (or [GitHub Releases](https://github.com/subhranilBCG/VectraTouch/releases/latest)).
+1. **Download** `VectraTouch-v1.1.0.apk` from the button above (or [GitHub Releases](https://github.com/subhranilBCG/VectraTouch/releases/latest)).
 2. **Install** the APK on your Android phone.
 3. **Launch** VectraTouch and grant Bluetooth / Network permissions.
 
@@ -174,6 +174,7 @@ If you ever need the PC companion script without internet access:
 ## ⚙️ In-Canvas Glassmorphic Settings
 
 Tap the **⚙ (gear icon)** at the top of the trackpad to customize:
+* **⌨ Keyboard Mode:** Open your phone's native soft keyboard to type directly onto your PC over Bluetooth HID, USB, or Wi-Fi with instant key injection.
 * **Cursor Sensitivity Stepper:** Fine-tune speed (`0.4×` to `3.6×`) or tap presets (`0.8×`, `1.4×`, `2.0×`, `2.8×`).
 * **Display Orientation Lock:** Landscape, Reverse Landscape, Portrait, or Auto-Sensor.
 * **Haptic Feedback:** Tactile vibration pulses on clicks and gesture triggers.
@@ -234,7 +235,7 @@ VectraTouch/
 │   │   │   ├── VectraCompanion.ps1          # PowerShell mouse_event companion
 │   │   │   └── VectraCompanion.py           # Python cross-platform client
 │   │   └── res/                             # Cyber green themes, vectors & drawables
-│   └── build.gradle.kts                     # Gradle configuration (v1.0.0)
+│   └── build.gradle.kts                     # Gradle configuration (v1.1.0)
 ├── host/
 │   ├── vectra_usb_host.py                   # Python companion with single-instance lock
 │   ├── run_usb_windows.bat                  # 1-Click USB launcher

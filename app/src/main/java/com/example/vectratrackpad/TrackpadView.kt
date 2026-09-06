@@ -188,6 +188,17 @@ class TrackpadView @JvmOverloads constructor(
             invalidate()
         }
 
+    /** Whether the Keyboard Mode overlay is currently active. */
+    var isKeyboardModeActive: Boolean = false
+        set(value) {
+            field = value
+            keyboardModeListener?.invoke(value)
+            invalidate()
+        }
+
+    /** Callback to MainActivity to show/hide the soft keyboard IME. */
+    var keyboardModeListener: ((Boolean) -> Unit)? = null
+
     init {
         try {
             val prefs = context.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE)
@@ -264,6 +275,11 @@ class TrackpadView @JvmOverloads constructor(
     private val sensProgressBarRect = RectF()
     private val sensPresetRects = Array(4) { RectF() }
     private val orientOptionRects = Array(4) { RectF() }
+    private val keyboardModeBtnRect = RectF()
+
+    // ── Keyboard Mode Indicator Bar Bounds ─────────────────────────────
+    private val keyboardBarRect = RectF()
+    private val keyboardCloseBtnRect = RectF()
 
     // ════════════════════════════════════════════════════════════════════════
     // Paint Objects (pre-allocated)
@@ -583,7 +599,7 @@ class TrackpadView @JvmOverloads constructor(
 
     private fun computeSettingsLayout(w: Float, h: Float) {
         val dw = min(w * 0.90f, 430f * density)
-        val dh = min(h * 0.88f, 275f * density)
+        val dh = min(h * 0.88f, 320f * density)  // Taller to fit keyboard button
         val dx = (w - dw) / 2f
         val dy = (h - dh) / 2f
 
@@ -643,12 +659,30 @@ class TrackpadView @JvmOverloads constructor(
             )
         }
 
+        // Keyboard Mode Button (wide pill between orientation and done)
+        val kbY = dy + 202f * density
+        val kbH = 30f * density
+        val kbW = dw - (32f * density)
+        val kbX = dx + (dw - kbW) / 2f
+        keyboardModeBtnRect.set(kbX, kbY, kbX + kbW, kbY + kbH)
+
         // Done button (bottom center)
         val doneW = 100f * density
         val doneH = 26f * density
         val doneX = dx + (dw - doneW) / 2f
         val doneY = dy + dh - doneH - 12f * density
         settingsDoneBtnRect.set(doneX, doneY, doneX + doneW, doneY + doneH)
+
+        // Keyboard Mode Indicator Bar (bottom strip when active)
+        val barHeight = 36f * density
+        keyboardBarRect.set(0f, h - barHeight, w, h)
+        val closeBtnSize = 28f * density
+        keyboardCloseBtnRect.set(
+            w - closeBtnSize - 10f * density,
+            h - barHeight + (barHeight - closeBtnSize) / 2f,
+            w - 10f * density,
+            h - barHeight + (barHeight + closeBtnSize) / 2f
+        )
     }
 
     // ════════════════════════════════════════════════════════════════════════
@@ -661,6 +695,16 @@ class TrackpadView @JvmOverloads constructor(
         val actionIndex = event.actionIndex
         val x = event.x
         val y = event.y
+
+        // ── 0. Intercept keyboard mode bar close button ─────────────────
+        if (isKeyboardModeActive && actionMasked == MotionEvent.ACTION_DOWN) {
+            val closeHitRect = RectF(keyboardCloseBtnRect).apply { inset(-12f * density, -12f * density) }
+            if (closeHitRect.contains(x, y)) {
+                isKeyboardModeActive = false
+                performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                return true
+            }
+        }
 
         // ── 1. Intercept touches when Settings Dialog is open ────────────
         if (isSettingsOpen) {
@@ -742,6 +786,17 @@ class TrackpadView @JvmOverloads constructor(
                         return true
                     }
                 }
+
+                // Keyboard Mode Button
+                val kbHitRect = RectF(keyboardModeBtnRect).apply { inset(-4f * density, -8f * density) }
+                if (kbHitRect.contains(x, y)) {
+                    android.util.Log.d("TrackpadSettings", "Keyboard mode activated")
+                    isSettingsOpen = false
+                    isKeyboardModeActive = true
+                    performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                    return true
+                }
+
                 android.util.Log.d("TrackpadSettings", "Touch inside dialog not consumed by any control")
             }
             return true
@@ -1159,6 +1214,11 @@ class TrackpadView @JvmOverloads constructor(
         if (isSettingsOpen) {
             drawSettingsDialog(canvas, w, h)
         }
+
+        // ── 9. Keyboard Mode Indicator Bar (when active) ────────────────
+        if (isKeyboardModeActive) {
+            drawKeyboardBar(canvas, w, h)
+        }
     }
 
     private fun drawDotGrid(canvas: Canvas, w: Float, h: Float) {
@@ -1561,10 +1621,80 @@ class TrackpadView @JvmOverloads constructor(
             canvas.drawText(orientLabels[i], r.centerX(), r.centerY() + (oTextPaint.textSize / 3f), oTextPaint)
         }
 
-        // 6. Section 3: DONE Button
+        // 6. Section 3: KEYBOARD MODE Button
+        val kbLabelY = cardRect.top + 196f * density
+        canvas.drawText("PC KEYBOARD", titleX, kbLabelY, paintSectionLabel)
+
+        val kbRadius = keyboardModeBtnRect.height() / 2f
+        canvas.drawRoundRect(keyboardModeBtnRect, kbRadius, kbRadius, paintPillBg)
+        canvas.drawRoundRect(keyboardModeBtnRect, kbRadius, kbRadius, paintPillStroke)
+
+        val kbTextPaint = Paint(paintTabTextActive).apply {
+            textSize = 11f * density
+            letterSpacing = 0.06f
+        }
+        canvas.drawText(
+            "⌨  OPEN KEYBOARD MODE",
+            keyboardModeBtnRect.centerX(),
+            keyboardModeBtnRect.centerY() + (kbTextPaint.textSize / 3f),
+            kbTextPaint
+        )
+
+        // 7. Section 4: DONE Button
         val doneRadius = settingsDoneBtnRect.height() / 2f
         canvas.drawRoundRect(settingsDoneBtnRect, doneRadius, doneRadius, paintDoneBtn)
         canvas.drawRoundRect(settingsDoneBtnRect, doneRadius, doneRadius, paintDoneBtnStroke)
         canvas.drawText("DONE", settingsDoneBtnRect.centerX(), settingsDoneBtnRect.centerY() + (paintDoneText.textSize / 3f), paintDoneText)
+    }
+
+    // ── Keyboard Mode Indicator Bar ─────────────────────────────────────
+    private fun drawKeyboardBar(canvas: Canvas, w: Float, h: Float) {
+        // Semi-transparent green bar at bottom
+        val barPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = 0xFF0D130F.toInt()
+            style = Paint.Style.FILL
+        }
+        val barBorderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = COLOR_GREEN
+            style = Paint.Style.STROKE
+            strokeWidth = 1.2f * density
+            alpha = 150
+        }
+
+        canvas.drawRect(keyboardBarRect, barPaint)
+        canvas.drawLine(
+            keyboardBarRect.left, keyboardBarRect.top,
+            keyboardBarRect.right, keyboardBarRect.top,
+            barBorderPaint
+        )
+
+        // Keyboard icon + label
+        val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = COLOR_GREEN
+            textSize = 11f * density
+            textAlign = Paint.Align.LEFT
+            isFakeBoldText = true
+            letterSpacing = 0.06f
+        }
+        canvas.drawText(
+            "⌨  KEYBOARD MODE ACTIVE",
+            16f * density,
+            keyboardBarRect.centerY() + (labelPaint.textSize / 3f),
+            labelPaint
+        )
+
+        // Close button [✕]
+        val closePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = COLOR_LIGHT_GREEN
+            textSize = 13f * density
+            textAlign = Paint.Align.CENTER
+            isFakeBoldText = true
+        }
+        canvas.drawText(
+            "✕",
+            keyboardCloseBtnRect.centerX(),
+            keyboardCloseBtnRect.centerY() + (closePaint.textSize / 3f),
+            closePaint
+        )
     }
 }

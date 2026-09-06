@@ -8,9 +8,15 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -27,6 +33,7 @@ import androidx.core.view.WindowInsetsControllerCompat
  *   4. Wiring the HID manager to the trackpad surface
  *   5. Lifecycle management (cleanup on destroy)
  *   6. Dynamic screen orientation rotation
+ *   7. Keyboard Mode — Hidden EditText + IME management for PC keyboard input
  *
  * Uses plain android.app.Activity to avoid any AndroidX/AppCompat theme conflicts.
  * The Activity uses a single TrackpadView as its content — no XML layout needed.
@@ -45,6 +52,17 @@ class MainActivity : Activity() {
     private lateinit var trackpadView: TrackpadView
     private lateinit var hidManager: BluetoothHidManager
     private lateinit var transportManager: TrackpadTransportManager
+
+    /** Hidden zero-size EditText used to anchor the Android soft keyboard IME. */
+    private lateinit var keyboardEditText: EditText
+
+    /** System input method manager for showing/hiding the soft keyboard. */
+    private val imm: InputMethodManager by lazy {
+        getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    }
+
+    /** Guard to prevent TextWatcher feedback loops during programmatic text clearing. */
+    private var isTextWatcherSuppressed = false
 
     // ════════════════════════════════════════════════════════════════════════
     // Lifecycle
@@ -81,6 +99,9 @@ class MainActivity : Activity() {
         hidManager = BluetoothHidManager(this)
         transportManager = TrackpadTransportManager(this, hidManager)
 
+        // ── 4. Build the UI: FrameLayout with TrackpadView + hidden EditText ─
+        val rootLayout = FrameLayout(this)
+
         trackpadView = TrackpadView(this)
         trackpadView.hidManager = hidManager
         trackpadView.transportManager = transportManager
@@ -96,18 +117,78 @@ class MainActivity : Activity() {
             }
         }
 
-        // ── 4. Set the trackpad as the sole content view ───────────────
-        setContentView(trackpadView)
+        // Wire keyboard mode callback from TrackpadView
+        trackpadView.keyboardModeListener = { active ->
+            if (active) {
+                showSoftKeyboard()
+            } else {
+                hideSoftKeyboard()
+            }
+        }
 
-        Log.i(TAG, "TrackpadView set as content view")
+        rootLayout.addView(trackpadView, FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.MATCH_PARENT
+        ))
 
-        // ── 5. Immersive fullscreen (called after contentView is attached) ─
+        // ── 5. Create hidden EditText for IME anchoring ────────────────
+        keyboardEditText = EditText(this).apply {
+            // Make invisible — zero size, no background, transparent
+            alpha = 0f
+            isFocusable = true
+            isFocusableInTouchMode = true
+            setBackgroundColor(0x00000000)
+            // Prevent autocorrect/suggestions from interfering
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or
+                    android.text.InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+            imeOptions = android.view.inputmethod.EditorInfo.IME_FLAG_NO_FULLSCREEN or
+                    android.view.inputmethod.EditorInfo.IME_ACTION_NONE
+        }
+
+        // Wire TextWatcher to capture committed text
+        keyboardEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(editable: Editable?) {
+                if (isTextWatcherSuppressed) return
+                val text = editable?.toString() ?: return
+                if (text.isEmpty()) return
+
+                Log.d(TAG, "Keyboard text: \"$text\"")
+                transportManager.sendKeyboardText(text)
+
+                // Clear the EditText for next input (suppress watcher to avoid loop)
+                isTextWatcherSuppressed = true
+                editable.clear()
+                isTextWatcherSuppressed = false
+            }
+        })
+
+        // Handle editor action (IME "Done" / "Enter")
+        keyboardEditText.setOnEditorActionListener { _, actionId, _ ->
+            Log.d(TAG, "Editor action: $actionId")
+            transportManager.sendSpecialKey(0x01)  // Enter
+            true
+        }
+
+        rootLayout.addView(keyboardEditText, FrameLayout.LayoutParams(1, 1).apply {
+            // Position at bottom-left, tiny invisible anchor
+            gravity = android.view.Gravity.BOTTOM or android.view.Gravity.START
+        })
+
+        // ── 6. Set the root layout as the content view ─────────────────
+        setContentView(rootLayout)
+
+        Log.i(TAG, "TrackpadView + KeyboardEditText set as content view")
+
+        // ── 7. Immersive fullscreen (called after contentView is attached) ─
         enterImmersiveMode()
 
-        // ── 6. Start transport manager (USB Server + Bluetooth listener)
+        // ── 8. Start transport manager (USB Server + Bluetooth listener)
         transportManager.start()
 
-        // ── 7. Request permissions ─────────────────────────────────────
+        // ── 9. Request permissions ─────────────────────────────────────
         checkAndRequestPermissions()
     }
 
@@ -132,6 +213,82 @@ class MainActivity : Activity() {
     override fun onDestroy() {
         super.onDestroy()
         transportManager.destroy()
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    // Key Event Handling (for hardware keys & special IME keys)
+    // ════════════════════════════════════════════════════════════════════════
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (!trackpadView.isKeyboardModeActive) return super.onKeyDown(keyCode, event)
+
+        val specialCode = mapAndroidKeyToVectraCode(keyCode)
+        if (specialCode != null) {
+            val metaFlags = buildMetaFlags(event)
+            transportManager.sendSpecialKey(specialCode, metaFlags)
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
+    /**
+     * Map Android KeyEvent keycodes to VectraTouch special key codes.
+     */
+    private fun mapAndroidKeyToVectraCode(keyCode: Int): Int? {
+        return when (keyCode) {
+            KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> 0x01
+            KeyEvent.KEYCODE_DEL -> 0x02           // Backspace
+            KeyEvent.KEYCODE_TAB -> 0x03
+            KeyEvent.KEYCODE_ESCAPE -> 0x04
+            KeyEvent.KEYCODE_FORWARD_DEL -> 0x05    // Delete
+            KeyEvent.KEYCODE_DPAD_UP -> 0x06
+            KeyEvent.KEYCODE_DPAD_DOWN -> 0x07
+            KeyEvent.KEYCODE_DPAD_LEFT -> 0x08
+            KeyEvent.KEYCODE_DPAD_RIGHT -> 0x09
+            KeyEvent.KEYCODE_MOVE_HOME -> 0x0A
+            KeyEvent.KEYCODE_MOVE_END -> 0x0B
+            else -> null
+        }
+    }
+
+    /**
+     * Convert Android KeyEvent meta state to VectraTouch meta flags.
+     */
+    private fun buildMetaFlags(event: KeyEvent?): Int {
+        if (event == null) return 0
+        var flags = 0
+        if (event.isShiftPressed) flags = flags or 0x01
+        if (event.isCtrlPressed) flags = flags or 0x02
+        if (event.isAltPressed) flags = flags or 0x04
+        return flags
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    // Keyboard Mode — IME Management
+    // ════════════════════════════════════════════════════════════════════════
+
+    /**
+     * Show the Android soft keyboard by focusing the hidden EditText.
+     */
+    private fun showSoftKeyboard() {
+        keyboardEditText.requestFocus()
+        keyboardEditText.postDelayed({
+            imm.showSoftInput(keyboardEditText, InputMethodManager.SHOW_FORCED)
+        }, 100)
+        Log.i(TAG, "Soft keyboard shown for Keyboard Mode")
+    }
+
+    /**
+     * Hide the Android soft keyboard and clear focus.
+     */
+    private fun hideSoftKeyboard() {
+        imm.hideSoftInputFromWindow(keyboardEditText.windowToken, 0)
+        keyboardEditText.clearFocus()
+        // Re-enter immersive mode after keyboard hides
+        keyboardEditText.postDelayed({
+            enterImmersiveMode()
+        }, 200)
+        Log.i(TAG, "Soft keyboard hidden — Keyboard Mode off")
     }
 
     // ════════════════════════════════════════════════════════════════════════

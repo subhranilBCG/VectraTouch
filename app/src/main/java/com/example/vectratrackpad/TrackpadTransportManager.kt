@@ -201,6 +201,172 @@ class TrackpadTransportManager(
     }
 
     /**
+     * Send keyboard text via the currently active transport.
+     *
+     * - USB/Wi-Fi: Sends text as [0xAA, len_high, len_low, ...utf8...] via TCP
+     * - Bluetooth: Converts each character to HID keycodes and sends keyboard reports
+     *
+     * @param text  The text string to transmit
+     * @return true if transmitted successfully
+     */
+    fun sendKeyboardText(text: String): Boolean {
+        if (text.isEmpty()) return false
+
+        return when (currentMode) {
+            Mode.USB, Mode.WIFI -> {
+                usbServer.sendKeyboardText(text)
+            }
+            Mode.BLUETOOTH -> {
+                sendTextViaBtHid(text)
+            }
+            Mode.AUTO -> {
+                if (usbServer.isConnected()) {
+                    usbServer.sendKeyboardText(text)
+                } else {
+                    sendTextViaBtHid(text)
+                }
+            }
+        }
+    }
+
+    /**
+     * Send a special key via the currently active transport.
+     *
+     * @param keyCode    VectraTouch special key code (0x01=Enter, 0x02=Backspace, etc.)
+     * @param metaFlags  Modifier flags (0x01=Shift, 0x02=Ctrl, 0x04=Alt)
+     * @return true if transmitted successfully
+     */
+    fun sendSpecialKey(keyCode: Int, metaFlags: Int = 0): Boolean {
+        return when (currentMode) {
+            Mode.USB, Mode.WIFI -> {
+                usbServer.sendSpecialKey(keyCode, metaFlags)
+            }
+            Mode.BLUETOOTH -> {
+                sendSpecialKeyViaBtHid(keyCode, metaFlags)
+            }
+            Mode.AUTO -> {
+                if (usbServer.isConnected()) {
+                    usbServer.sendSpecialKey(keyCode, metaFlags)
+                } else {
+                    sendSpecialKeyViaBtHid(keyCode, metaFlags)
+                }
+            }
+        }
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    // Bluetooth HID Keyboard Helpers
+    // ════════════════════════════════════════════════════════════════════════
+
+    /**
+     * USB HID keycode mapping for printable ASCII characters.
+     * Each entry is Pair(hidKeyCode, requiresShift).
+     */
+    private val charToHidKeyCode: Map<Char, Pair<Int, Boolean>> by lazy {
+        buildMap {
+            // Letters a-z (HID 0x04–0x1D)
+            for (c in 'a'..'z') {
+                put(c, Pair(0x04 + (c - 'a'), false))
+            }
+            for (c in 'A'..'Z') {
+                put(c, Pair(0x04 + (c - 'A'), true))
+            }
+            // Digits 1-9 (HID 0x1E–0x26), 0 = 0x27
+            for (c in '1'..'9') {
+                put(c, Pair(0x1E + (c - '1'), false))
+            }
+            put('0', Pair(0x27, false))
+            // Shifted digit symbols
+            put('!', Pair(0x1E, true))
+            put('@', Pair(0x1F, true))
+            put('#', Pair(0x20, true))
+            put('$', Pair(0x21, true))
+            put('%', Pair(0x22, true))
+            put('^', Pair(0x23, true))
+            put('&', Pair(0x24, true))
+            put('*', Pair(0x25, true))
+            put('(', Pair(0x26, true))
+            put(')', Pair(0x27, true))
+            // Special chars
+            put('\n', Pair(0x28, false))  // Enter
+            put('\t', Pair(0x2B, false))  // Tab
+            put(' ', Pair(0x2C, false))   // Space
+            put('-', Pair(0x2D, false))
+            put('_', Pair(0x2D, true))
+            put('=', Pair(0x2E, false))
+            put('+', Pair(0x2E, true))
+            put('[', Pair(0x2F, false))
+            put('{', Pair(0x2F, true))
+            put(']', Pair(0x30, false))
+            put('}', Pair(0x30, true))
+            put('\\', Pair(0x31, false))
+            put('|', Pair(0x31, true))
+            put(';', Pair(0x33, false))
+            put(':', Pair(0x33, true))
+            put('\'', Pair(0x34, false))
+            put('"', Pair(0x34, true))
+            put('`', Pair(0x35, false))
+            put('~', Pair(0x35, true))
+            put(',', Pair(0x36, false))
+            put('<', Pair(0x36, true))
+            put('.', Pair(0x37, false))
+            put('>', Pair(0x37, true))
+            put('/', Pair(0x38, false))
+            put('?', Pair(0x38, true))
+        }
+    }
+
+    /** VectraTouch special key code → HID keycode mapping */
+    private val specialKeyToHid = mapOf(
+        0x01 to 0x28,  // Enter
+        0x02 to 0x2A,  // Backspace
+        0x03 to 0x2B,  // Tab
+        0x04 to 0x29,  // Escape
+        0x05 to 0x4C,  // Delete
+        0x06 to 0x52,  // Arrow Up
+        0x07 to 0x51,  // Arrow Down
+        0x08 to 0x50,  // Arrow Left
+        0x09 to 0x4F,  // Arrow Right
+        0x0A to 0x4A,  // Home
+        0x0B to 0x4D   // End
+    )
+
+    /**
+     * Convert a text string to HID keyboard reports and send via Bluetooth.
+     * Each character is sent as a key-down + key-up pair.
+     */
+    private fun sendTextViaBtHid(text: String): Boolean {
+        var success = true
+        for (char in text) {
+            val mapping = charToHidKeyCode[char]
+            if (mapping != null) {
+                val (hidKey, shift) = mapping
+                val modifiers = if (shift) 0x02 else 0x00  // Left Shift = bit 1
+                success = btManager.sendKeyboardReport(modifiers, intArrayOf(hidKey)) && success
+                success = btManager.sendKeyRelease() && success
+            }
+        }
+        return success
+    }
+
+    /**
+     * Convert a VectraTouch special key code to a HID keycode and send via Bluetooth.
+     */
+    private fun sendSpecialKeyViaBtHid(keyCode: Int, metaFlags: Int): Boolean {
+        val hidKey = specialKeyToHid[keyCode] ?: return false
+
+        // Convert VectraTouch meta flags to HID modifier bitmask
+        var modifiers = 0
+        if (metaFlags and 0x01 != 0) modifiers = modifiers or 0x02  // Shift → Left Shift
+        if (metaFlags and 0x02 != 0) modifiers = modifiers or 0x01  // Ctrl → Left Ctrl
+        if (metaFlags and 0x04 != 0) modifiers = modifiers or 0x04  // Alt → Left Alt
+
+        val press = btManager.sendKeyboardReport(modifiers, intArrayOf(hidKey))
+        val release = btManager.sendKeyRelease()
+        return press && release
+    }
+
+    /**
      * Stop and clean up resources.
      */
     fun destroy() {

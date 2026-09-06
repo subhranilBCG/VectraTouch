@@ -36,19 +36,29 @@ class BluetoothHidManager(private val context: Context) {
         private const val TAG = "VectraHidManager"
 
         /**
-         * Standard USB HID Report Descriptor for a 3-button relative mouse with
-         * vertical scroll wheel. Follows the USB HID 1.11 specification.
+         * Combined USB HID Report Descriptor for a 3-button relative mouse with
+         * vertical scroll wheel AND a standard 104-key keyboard.
+         * Uses Report IDs to multiplex both devices over a single HID channel.
          *
-         * Report structure:
+         * Report ID 1 — Mouse (4 bytes):
          *   - 3 button bits + 5 bits padding
          *   - 8-bit relative X
          *   - 8-bit relative Y
          *   - 8-bit relative wheel
+         *
+         * Report ID 2 — Keyboard (8 bytes):
+         *   - 8-bit modifier keys (Ctrl/Shift/Alt/GUI × Left/Right)
+         *   - 8-bit reserved (0x00)
+         *   - 6 × 8-bit key codes (simultaneous keys)
          */
         private val MOUSE_REPORT_DESCRIPTOR = byteArrayOf(
+            // ════════════════════════════════════════════════════════════
+            // Report ID 1 — Mouse
+            // ════════════════════════════════════════════════════════════
             0x05, 0x01,        // Usage Page (Generic Desktop Controls)
             0x09, 0x02,        // Usage (Mouse)
             0xA1.toByte(), 0x01, // Collection (Application)
+            0x85.toByte(), 0x01, //   Report ID (1)
             0x09, 0x01,        //   Usage (Pointer)
             0xA1.toByte(), 0x00, //   Collection (Physical)
 
@@ -79,6 +89,41 @@ class BluetoothHidManager(private val context: Context) {
             0x81.toByte(), 0x06, //     Input (Data, Variable, Relative)
 
             0xC0.toByte(),      //   End Collection (Physical)
+            0xC0.toByte(),      // End Collection (Application)
+
+            // ════════════════════════════════════════════════════════════
+            // Report ID 2 — Keyboard
+            // ════════════════════════════════════════════════════════════
+            0x05, 0x01,        // Usage Page (Generic Desktop Controls)
+            0x09, 0x06,        // Usage (Keyboard)
+            0xA1.toByte(), 0x01, // Collection (Application)
+            0x85.toByte(), 0x02, //   Report ID (2)
+
+            // ── Modifier keys (8 bits) ─────────────────────────────────
+            0x05, 0x07,        //   Usage Page (Keyboard/Keypad)
+            0x19, 0xE0.toByte(), //   Usage Minimum (Left Control — 0xE0)
+            0x29, 0xE7.toByte(), //   Usage Maximum (Right GUI — 0xE7)
+            0x15, 0x00,        //   Logical Minimum (0)
+            0x25, 0x01,        //   Logical Maximum (1)
+            0x75, 0x01,        //   Report Size (1 bit)
+            0x95.toByte(), 0x08, //   Report Count (8)
+            0x81.toByte(), 0x02, //   Input (Data, Variable, Absolute)
+
+            // ── Reserved byte ──────────────────────────────────────────
+            0x95.toByte(), 0x01, //   Report Count (1)
+            0x75, 0x08,        //   Report Size (8 bits)
+            0x81.toByte(), 0x01, //   Input (Constant) — reserved padding
+
+            // ── Key codes (6 simultaneous keys) ────────────────────────
+            0x95.toByte(), 0x06, //   Report Count (6)
+            0x75, 0x08,        //   Report Size (8 bits)
+            0x15, 0x00,        //   Logical Minimum (0)
+            0x25, 0x65,        //   Logical Maximum (101)
+            0x05, 0x07,        //   Usage Page (Keyboard/Keypad)
+            0x19, 0x00,        //   Usage Minimum (0)
+            0x29, 0x65,        //   Usage Maximum (101)
+            0x81.toByte(), 0x00, //   Input (Data, Array)
+
             0xC0.toByte()       // End Collection (Application)
         )
     }
@@ -290,6 +335,7 @@ class BluetoothHidManager(private val context: Context) {
 
     /**
      * Send a 4-byte mouse HID report to the connected host.
+     * Uses Report ID 1 (mouse) for the combined HID descriptor.
      *
      * @param buttons  Button bitmask: 0x01=Left, 0x02=Right, 0x04=Middle
      * @param dx       Relative X movement (clamped to [-127, 127])
@@ -313,11 +359,52 @@ class BluetoothHidManager(private val context: Context) {
         )
 
         return try {
-            hid.sendReport(device, 0, report)
+            hid.sendReport(device, 1, report)  // Report ID 1 = Mouse
         } catch (e: Exception) {
-            Log.e(TAG, "Exception during sendReport", e)
+            Log.e(TAG, "Exception during sendReport (mouse)", e)
             false
         }
+    }
+
+    /**
+     * Send an 8-byte keyboard HID report to the connected host.
+     * Uses Report ID 2 (keyboard) for the combined HID descriptor.
+     *
+     * @param modifiers  Modifier bitmask: Bit0=LCtrl, Bit1=LShift, Bit2=LAlt,
+     *                   Bit3=LGUI, Bit4=RCtrl, Bit5=RShift, Bit6=RAlt, Bit7=RGUI
+     * @param keyCodes   Array of up to 6 HID key codes (USB HID Usage Table)
+     * @return true if the report was sent successfully
+     */
+    @Suppress("MissingPermission")
+    fun sendKeyboardReport(modifiers: Int, keyCodes: IntArray): Boolean {
+        val device = hostDevice ?: return false
+        val hid = hidDevice ?: return false
+
+        if (!isAppRegistered) return false
+
+        // Pack the 8-byte HID keyboard report
+        val report = ByteArray(8)
+        report[0] = (modifiers and 0xFF).toByte()   // Modifier keys
+        report[1] = 0x00                             // Reserved
+        for (i in 0 until minOf(keyCodes.size, 6)) {
+            report[2 + i] = (keyCodes[i] and 0xFF).toByte()
+        }
+
+        return try {
+            hid.sendReport(device, 2, report)  // Report ID 2 = Keyboard
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception during sendReport (keyboard)", e)
+            false
+        }
+    }
+
+    /**
+     * Send a key release (all-zeros keyboard report) to the connected host.
+     * Must be called after each key press to simulate key-up.
+     */
+    @Suppress("MissingPermission")
+    fun sendKeyRelease(): Boolean {
+        return sendKeyboardReport(0, IntArray(0))
     }
 
     /**
