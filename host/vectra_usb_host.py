@@ -222,7 +222,8 @@ def setup_adb_forward(port: int):
     """Run `adb forward tcp:<port> tcp:<port>` to route USB traffic."""
     adb_path = find_adb()
     try:
-        res = subprocess.run([adb_path, "devices"], capture_output=True, text=True, timeout=3)
+        subprocess.run([adb_path, "start-server"], capture_output=True, timeout=6)
+        res = subprocess.run([adb_path, "devices"], capture_output=True, text=True, timeout=6)
         devices = []
         if res.returncode == 0:
             for line in res.stdout.strip().splitlines()[1:]:
