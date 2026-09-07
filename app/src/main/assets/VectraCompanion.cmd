@@ -135,11 +135,12 @@ function Connect-Usb-Debugging {
     if ($adbCmd -ne "") {
         Write-Host "  ADB executable found: $adbCmd" -ForegroundColor Green
         
-        # Start ADB daemon cleanly in the background if not already running (prevents NativeCommandError)
-        cmd.exe /c "`"$adbCmd`" start-server >nul 2>&1"
+        # Suppress NativeCommandError while executing adb commands
+        $prevEAP = $ErrorActionPreference
+        $ErrorActionPreference = 'SilentlyContinue'
 
-        # Check connected devices silently via cmd redirection to completely bypass PowerShell NativeCommandError
-        $devOutput = [string](cmd.exe /c "`"$adbCmd`" devices 2>nul")
+        # Check connected devices silently
+        $devOutput = [string](& $adbCmd devices 2>&1)
         if ($devOutput -match "\bdevice\b" -and $devOutput -notmatch "List of devices attach\s*$") {
             Write-Host "  Android USB Device detected!" -ForegroundColor Green
         } else {
@@ -150,8 +151,10 @@ function Connect-Usb-Debugging {
         }
 
         Write-Host "  Executing: ADB port forward (ports ${TARGET_PORT} & 8080)..." -ForegroundColor DarkGray
-        cmd.exe /c "`"$adbCmd`" forward tcp:${TARGET_PORT} tcp:${TARGET_PORT} >nul 2>&1"
-        cmd.exe /c "`"$adbCmd`" forward tcp:8080 tcp:8080 >nul 2>&1"
+        [void](& $adbCmd forward tcp:${TARGET_PORT} tcp:${TARGET_PORT} 2>&1)
+        [void](& $adbCmd forward tcp:8080 tcp:8080 2>&1)
+        $ErrorActionPreference = $prevEAP
+
         Write-Host "  Port Forward Active: tcp:${TARGET_PORT} -> tcp:${TARGET_PORT}" -ForegroundColor Green
     } else {
         Write-Host "  ADB executable not found in PATH. Defaulting to 127.0.0.1..." -ForegroundColor DarkYellow
